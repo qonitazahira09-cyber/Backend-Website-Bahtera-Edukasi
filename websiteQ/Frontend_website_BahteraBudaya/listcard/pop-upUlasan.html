@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ulasan Rumah Adat</title>
+    <link rel="stylesheet" href="pop-upUlasan.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ==============================
+           AUTH MODAL (Login / Daftar)
+        ============================== */
+        .auth-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.65);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .25s ease;
+        }
+        .auth-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .auth-box {
+            background: #fff;
+            border-radius: 14px;
+            width: 100%;
+            max-width: 420px;
+            padding: 36px 32px 28px;
+            box-shadow: 0 8px 32px rgba(0,0,0,.18);
+            transform: translateY(16px);
+            transition: transform .25s ease;
+        }
+        .auth-overlay.active .auth-box {
+            transform: translateY(0);
+        }
+        .auth-box h2 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 6px;
+        }
+        .auth-box .auth-sub {
+            font-size: .85rem;
+            color: #888;
+            margin-bottom: 22px;
+        }
+        .auth-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 22px;
+        }
+        .auth-tab {
+            flex: 1;
+            padding: 8px 0;
+            border: none;
+            border-bottom: 2px solid #e0e0e0;
+            background: none;
+            font-family: 'Inter', sans-serif;
+            font-size: .9rem;
+            font-weight: 600;
+            color: #888;
+            cursor: pointer;
+            transition: all .2s;
+        }
+        .auth-tab.active {
+            color: #8b0000;
+            border-bottom-color: #8b0000;
+        }
+        .auth-field {
+            margin-bottom: 14px;
+        }
+        .auth-field label {
+            display: block;
+            font-size: .8rem;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 5px;
+        }
+        .auth-field input {
+            width: 100%;
+            height: 42px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 0 14px;
+            font-family: 'Inter', sans-serif;
+            font-size: .875rem;
+            color: #1a1a1a;
+            transition: border-color .2s;
+            box-sizing: border-box;
+        }
+        .auth-field input:focus {
+            outline: none;
+            border-color: #8b0000;
+            box-shadow: 0 0 0 3px rgba(139,0,0,.12);
+        }
+        .auth-error {
+            background: #fff0f0;
+            border: 1px solid #ffcccc;
+            border-radius: 7px;
+            padding: 9px 12px;
+            font-size: .8rem;
+            color: #c00;
+            margin-bottom: 14px;
+            display: none;
+        }
+        .auth-error.show { display: block; }
+        .auth-btn-submit {
+            width: 100%;
+            height: 42px;
+            background: #8b0000;
+            color: #fff;
+            border: none;
+            border-radius: 22px;
+            font-family: 'Inter', sans-serif;
+            font-size: .9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .2s;
+            margin-top: 6px;
+        }
+        .auth-btn-submit:hover { background: #7a0000; }
+        .auth-btn-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .auth-close {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            color: #888;
+            cursor: pointer;
+        }
+        .auth-box { position: relative; }
+
+        /* Status bar (sudah login) */
+        .user-status-bar {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            background: #fff8f8;
+            border: 1px solid #f0d0d0;
+            border-radius: 22px;
+            padding: 6px 16px;
+            font-size: .85rem;
+            margin-bottom: 16px;
+        }
+        .user-status-bar.visible { display: flex; }
+        .user-status-bar span { color: #8b0000; font-weight: 600; }
+        .user-status-bar button {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: .78rem;
+            cursor: pointer;
+            text-decoration: underline;
+            padding: 0;
+        }
+        .user-status-bar button:hover { color: #c00; }
+
+        /* Tombol "Masuk untuk berkomentar" */
+        .login-prompt-btn {
+            background: none;
+            border: 1.5px solid #8b0000;
+            color: #8b0000;
+            border-radius: 22px;
+            padding: 7px 20px;
+            font-family: 'Inter', sans-serif;
+            font-size: .85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 16px;
+            transition: all .2s;
+        }
+        .login-prompt-btn:hover {
+            background: #8b0000;
+            color: #fff;
+        }
+
+        /* Loading spinner kecil di tombol submit */
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,.4);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .6s linear infinite;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<!-- ============================================================
+     MODAL UTAMA: ULASAN & RATING
+============================================================ -->
+<div class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2 class="modal-title">Ulasan &amp; Rating Konten Budaya</h2>
+            <button class="close-button" aria-label="Tutup modal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="divider"></div>
+
+        <div class="modal-content">
+
+            <!-- Rating rata-rata -->
+            <div class="overall-rating">
+                <div class="rating-number" id="avg-rating">—</div>
+                <div>
+                    <div class="stars-container" id="avg-stars">
+                        <i class="far fa-star"></i><i class="far fa-star"></i>
+                        <i class="far fa-star"></i><i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <span class="max-rating">5.0</span>
+                    </div>
+                    <div style="font-size:.75rem;color:#888;margin-top:2px">
+                        <span id="total-reviews">0</span> ulasan
+                    </div>
+                </div>
+            </div>
+
+            <!-- Distribusi bintang -->
+            <div class="rating-distribution" id="rating-dist">
+                <div class="rating-bar"><span class="star-label">5 star</span><div class="progress-bar"><div class="progress-fill" id="bar5" style="width:0%"></div></div><span class="review-count" id="cnt5">0</span></div>
+                <div class="rating-bar"><span class="star-label">4 star</span><div class="progress-bar"><div class="progress-fill" id="bar4" style="width:0%"></div></div><span class="review-count" id="cnt4">0</span></div>
+                <div class="rating-bar"><span class="star-label">3 star</span><div class="progress-bar"><div class="progress-fill" id="bar3" style="width:0%"></div></div><span class="review-count" id="cnt3">0</span></div>
+                <div class="rating-bar"><span class="star-label">2 star</span><div class="progress-bar"><div class="progress-fill" id="bar2" style="width:0%"></div></div><span class="review-count" id="cnt2">0</span></div>
+                <div class="rating-bar"><span class="star-label">1 star</span><div class="progress-bar"><div class="progress-fill" id="bar1" style="width:0%"></div></div><span class="review-count" id="cnt1">0</span></div>
+            </div>
+
+            <!-- Status login / logout bar -->
+            <div class="user-status-bar" id="user-status-bar">
+                <i class="fas fa-user-circle" style="color:#8b0000"></i>
+                Halo, <span id="user-nama-display"></span>
+                <button id="logout-btn">Keluar</button>
+            </div>
+
+            <!-- Tombol masuk untuk berkomentar (tampil jika belum login) -->
+            <button class="login-prompt-btn" id="login-prompt-btn">
+                <i class="fas fa-sign-in-alt"></i> Masuk untuk berkomentar
+            </button>
+
+            <!-- Tombol Tulis Ulasan (tampil jika sudah login) -->
+            <button class="write-review-btn" id="open-review-form" style="display:none">
+                <i class="fas fa-plus"></i> Tulis Ulasan
+            </button>
+
+            <!-- Form ulasan -->
+            <div class="review-form" id="review-form">
+                <div class="form-scrollable">
+                    <h3 class="form-title">Penilaian Anda</h3>
+                    <div class="star-rating" id="form-stars">
+                        <i class="far fa-star"></i><i class="far fa-star"></i>
+                        <i class="far fa-star"></i><i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ulasan Anda</label>
+                        <textarea id="user-review" class="form-textarea" placeholder="Tuliskan pendapat Anda tentang konten budaya ini." rows="4"></textarea>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn-cancel" id="cancel-form">Batal</button>
+                    <button class="btn-submit" id="submit-review">Kirim Ulasan</button>
+                </div>
+            </div>
+
+            <!-- Daftar ulasan -->
+            <div class="reviews-container" id="reviews-container">
+                <p style="color:#aaa;font-size:.85rem;text-align:center;padding:20px 0">
+                    Memuat ulasan…
+                </p>
+            </div>
+
+        </div><!-- /modal-content -->
+    </div>
+</div>
+
+
+<!-- ============================================================
+     MODAL AUTH: LOGIN & DAFTAR
+============================================================ -->
+<div class="auth-overlay" id="auth-overlay">
+    <div class="auth-box">
+        <button class="auth-close" id="auth-close-btn" aria-label="Tutup">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <h2>Selamat Datang</h2>
+        <p class="auth-sub">Masuk atau daftar untuk memberi ulasan</p>
+
+        <!-- Tab Login / Daftar -->
+        <div class="auth-tabs">
+            <button class="auth-tab active" data-tab="login">Masuk</button>
+            <button class="auth-tab" data-tab="register">Daftar</button>
+        </div>
+
+        <!-- Pesan error -->
+        <div class="auth-error" id="auth-error"></div>
+
+        <!-- Panel LOGIN -->
+        <div id="panel-login">
+            <div class="auth-field">
+                <label>Email</label>
+                <input type="email" id="login-email" placeholder="email@kamu.com" autocomplete="email">
+            </div>
+            <div class="auth-field">
+                <label>Password</label>
+                <input type="password" id="login-password" placeholder="Password kamu" autocomplete="current-password">
+            </div>
+            <button class="auth-btn-submit" id="btn-login">Masuk</button>
+        </div>
+
+        <!-- Panel DAFTAR -->
+        <div id="panel-register" style="display:none">
+            <div class="auth-field">
+                <label>Nama Lengkap</label>
+                <input type="text" id="reg-nama" placeholder="Nama kamu">
+            </div>
+            <div class="auth-field">
+                <label>Email</label>
+                <input type="email" id="reg-email" placeholder="email@kamu.com" autocomplete="email">
+            </div>
+            <div class="auth-field">
+                <label>Password <small style="color:#aaa">(min. 6 karakter)</small></label>
+                <input type="password" id="reg-password" placeholder="Buat password" autocomplete="new-password">
+            </div>
+            <button class="auth-btn-submit" id="btn-register">Daftar &amp; Masuk</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+// ── Konfigurasi ──────────────────────────────────────────────
+const API_AUTH   = 'auth.php';
+const API_REVIEW = 'review.php?konten=mod-aki-aksa';
+
+// ── State ────────────────────────────────────────────────────
+let currentUser = null;   // null = belum login, { nama } = sudah login
+let formRating  = 0;      // bintang yang dipilih di form
+
+// ── Elemen ──────────────────────────────────────────────────
+const authOverlay      = document.getElementById('auth-overlay');
+const authError        = document.getElementById('auth-error');
+const loginPromptBtn   = document.getElementById('login-prompt-btn');
+const openReviewBtn    = document.getElementById('open-review-form');
+const userStatusBar    = document.getElementById('user-status-bar');
+const userNamaDisplay  = document.getElementById('user-nama-display');
+const logoutBtn        = document.getElementById('logout-btn');
+const reviewForm       = document.getElementById('review-form');
+const cancelBtn        = document.getElementById('cancel-form');
+const submitBtn        = document.getElementById('submit-review');
+const reviewsContainer = document.getElementById('reviews-container');
+
+// ── Helper: fetch JSON ───────────────────────────────────────
+async function api(url, body = null) {
+    const opts = body
+        ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
+        : { method: 'GET' };
+    const res  = await fetch(url, opts);
+    return res.json();
+}
+
+// ── Helper: render bintang (string) ─────────────────────────
+function starsHtml(rating, size = '0.9rem') {
+    let html = '';
+    for (let i = 1; i <= 5; i++) {
+        if (i <= Math.floor(rating))       html += `<i class="fas fa-star" style="color:#ffa500;font-size:${size}"></i>`;
+        else if (i - rating < 1)           html += `<i class="fas fa-star-half-alt" style="color:#ffa500;font-size:${size}"></i>`;
+        else                               html += `<i class="far fa-star" style="color:#ffa500;font-size:${size}"></i>`;
+    }
+    return html;
+}
+
+// ── Helper: format tanggal relatif ──────────────────────────
+function relativeTime(dateStr) {
+    const diff = (Date.now() - new Date(dateStr)) / 1000;
+    if (diff < 60)          return 'baru saja';
+    if (diff < 3600)        return `${Math.floor(diff/60)} menit lalu`;
+    if (diff < 86400)       return `${Math.floor(diff/3600)} jam lalu`;
+    if (diff < 2592000)     return `${Math.floor(diff/86400)} hari lalu`;
+    if (diff < 31536000)    return `${Math.floor(diff/2592000)} bulan lalu`;
+    return `${Math.floor(diff/31536000)} tahun lalu`;
+}
+
+// ── UPDATE UI berdasarkan status login ──────────────────────
+function updateUI() {
+    if (currentUser) {
+        loginPromptBtn.style.display   = 'none';
+        openReviewBtn.style.display    = 'flex';
+        userStatusBar.classList.add('visible');
+        userNamaDisplay.textContent    = currentUser.nama;
+    } else {
+        loginPromptBtn.style.display   = 'flex';
+        openReviewBtn.style.display    = 'none';
+        userStatusBar.classList.remove('visible');
+        // Tutup form jika terbuka
+        closeReviewForm();
+    }
+}
+
+// ── CEK sesi login saat halaman dibuka ──────────────────────
+async function checkSession() {
+    const res = await api(`${API_AUTH}?action=check`);
+    if (res.success) {
+        currentUser = { nama: res.nama };
+    }
+    updateUI();
+    loadReviews();
+}
+
+// ── LOAD ulasan dari server ──────────────────────────────────
+async function loadReviews() {
+    const res = await api(`${API_REVIEW}&action=get`);
+    if (!res.success) return;
+
+    // Update angka rata-rata
+    const avg = res.avg_rating;
+    document.getElementById('avg-rating').textContent   = avg || '—';
+    document.getElementById('total-reviews').textContent = res.total;
+    document.getElementById('avg-stars').innerHTML      =
+        starsHtml(avg, '1rem') + '<span class="max-rating">5.0</span>';
+
+    // Update distribusi bar
+    const total = res.total || 1;
+    [5,4,3,2,1].forEach(s => {
+        document.getElementById(`bar${s}`).style.width = ((res.dist[s]/total)*100) + '%';
+        document.getElementById(`cnt${s}`).textContent  = res.dist[s];
+    });
+
+    // Render review items
+    if (res.reviews.length === 0) {
+        reviewsContainer.innerHTML =
+            '<p style="color:#aaa;font-size:.85rem;text-align:center;padding:20px 0">Belum ada ulasan. Jadilah yang pertama!</p>';
+        return;
+    }
+
+    reviewsContainer.innerHTML = res.reviews.map((r, idx) => `
+        <div>
+            ${idx > 0 ? '<div class="review-divider"></div>' : ''}
+            <div class="review-item">
+                <div class="user-avatar">${r.user_nama.slice(0,2).toUpperCase()}</div>
+                <div class="review-content">
+                    <div class="user-info">
+                        <div class="user-name">${escHtml(r.user_nama)}</div>
+                        <div class="review-time">${relativeTime(r.created_at)}</div>
+                    </div>
+                    <div class="user-rating">${starsHtml(r.rating, '0.875rem')}</div>
+                    <p class="review-text">${escHtml(r.ulasan)}</p>
+                    <div class="like-container">
+                        <button class="like-btn ${r.user_liked ? 'liked' : ''}"
+                                data-id="${r.id}" data-count="${r.total_likes}">
+                            <i class="${r.user_liked ? 'fas' : 'far'} fa-thumbs-up"></i>
+                            <span>${r.total_likes}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+
+    // Bind event like
+    reviewsContainer.querySelectorAll('.like-btn').forEach(btn => {
+        btn.addEventListener('click', () => toggleLike(btn));
+    });
+}
+
+// ── TOGGLE LIKE ──────────────────────────────────────────────
+async function toggleLike(btn) {
+    if (!currentUser) { openAuth(); return; }
+    const id  = parseInt(btn.dataset.id);
+    const res = await api(`${API_REVIEW}&action=like`, { review_id: id });
+    if (!res.success) { alert(res.message); return; }
+    btn.querySelector('i').className   = `${res.liked ? 'fas' : 'far'} fa-thumbs-up`;
+    btn.querySelector('span').textContent = res.total;
+    btn.classList.toggle('liked', res.liked);
+}
+
+// ── ESCAPE HTML ──────────────────────────────────────────────
+function escHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+              .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ── BINTANG FORM ─────────────────────────────────────────────
+document.getElementById('form-stars').querySelectorAll('i').forEach((star, idx, all) => {
+    star.addEventListener('click', () => {
+        formRating = idx + 1;
+        all.forEach((s, i) => {
+            s.className = i <= idx ? 'fas fa-star active' : 'far fa-star';
+        });
+    });
+    star.addEventListener('mouseover', () => {
+        all.forEach((s, i) => {
+            s.className = i <= idx ? 'fas fa-star active' : 'far fa-star';
+        });
+    });
+    star.addEventListener('mouseleave', () => {
+        all.forEach((s, i) => {
+            s.className = i < formRating ? 'fas fa-star active' : 'far fa-star';
+        });
+    });
+});
+
+// ── BUKA / TUTUP form ulasan ──────────────────────────────────
+function openReviewForm() {
+    reviewForm.style.maxHeight = reviewForm.scrollHeight + 300 + 'px';
+    reviewForm.style.opacity   = '1';
+    reviewForm.style.padding   = '0 24px 24px';
+    openReviewBtn.style.display = 'none';
+}
+function closeReviewForm() {
+    reviewForm.style.maxHeight  = '0';
+    reviewForm.style.opacity    = '0';
+    reviewForm.style.padding    = '0 24px';
+    if (currentUser) openReviewBtn.style.display = 'flex';
+}
+
+openReviewBtn.addEventListener('click', openReviewForm);
+cancelBtn.addEventListener('click', () => { resetForm(); closeReviewForm(); });
+
+// ── SUBMIT ULASAN ────────────────────────────────────────────
+submitBtn.addEventListener('click', async () => {
+    const ulasan = document.getElementById('user-review').value.trim();
+    if (formRating === 0)  { alert('Pilih rating bintang terlebih dahulu!'); return; }
+    if (!ulasan)           { alert('Ulasan tidak boleh kosong!'); return; }
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner"></span> Menyimpan…';
+
+    const res = await api(`${API_REVIEW}&action=submit`, { rating: formRating, ulasan });
+
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = 'Kirim Ulasan';
+
+    if (!res.success) { alert(res.message); return; }
+
+    alert('Ulasan berhasil disimpan! Terima kasih.');
+    resetForm();
+    closeReviewForm();
+    loadReviews();   // refresh daftar
+});
+
+function resetForm() {
+    document.getElementById('user-review').value = '';
+    formRating = 0;
+    document.getElementById('form-stars').querySelectorAll('i').forEach(s => {
+        s.className = 'far fa-star';
+    });
+}
+
+// ── AUTH MODAL ───────────────────────────────────────────────
+function openAuth(tab = 'login') {
+    authError.classList.remove('show');
+    authOverlay.classList.add('active');
+    switchTab(tab);
+}
+function closeAuth() {
+    authOverlay.classList.remove('active');
+}
+
+loginPromptBtn.addEventListener('click', () => openAuth('login'));
+document.getElementById('auth-close-btn').addEventListener('click', closeAuth);
+authOverlay.addEventListener('click', e => { if (e.target === authOverlay) closeAuth(); });
+
+// Tab switch
+document.querySelectorAll('.auth-tab').forEach(tab => {
+    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+});
+function switchTab(name) {
+    document.querySelectorAll('.auth-tab').forEach(t =>
+        t.classList.toggle('active', t.dataset.tab === name));
+    document.getElementById('panel-login').style.display    = name === 'login'    ? '' : 'none';
+    document.getElementById('panel-register').style.display = name === 'register' ? '' : 'none';
+    authError.classList.remove('show');
+}
+
+function showAuthError(msg) {
+    authError.textContent = msg;
+    authError.classList.add('show');
+}
+
+// LOGIN
+document.getElementById('btn-login').addEventListener('click', async () => {
+    const email    = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    if (!email || !password) { showAuthError('Email dan password wajib diisi.'); return; }
+
+    const btn = document.getElementById('btn-login');
+    btn.disabled = true; btn.textContent = 'Memproses…';
+
+    const res = await api(`${API_AUTH}?action=login`, { email, password });
+    btn.disabled = false; btn.textContent = 'Masuk';
+
+    if (!res.success) { showAuthError(res.message); return; }
+    currentUser = { nama: res.nama };
+    closeAuth();
+    updateUI();
+});
+
+// DAFTAR
+document.getElementById('btn-register').addEventListener('click', async () => {
+    const nama     = document.getElementById('reg-nama').value.trim();
+    const email    = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    if (!nama || !email || !password) { showAuthError('Semua field wajib diisi.'); return; }
+
+    const btn = document.getElementById('btn-register');
+    btn.disabled = true; btn.textContent = 'Mendaftar…';
+
+    const res = await api(`${API_AUTH}?action=register`, { nama, email, password });
+    btn.disabled = false; btn.textContent = 'Daftar & Masuk';
+
+    if (!res.success) { showAuthError(res.message); return; }
+    currentUser = { nama: res.nama };
+    closeAuth();
+    updateUI();
+});
+
+// LOGOUT
+logoutBtn.addEventListener('click', async () => {
+    await api(`${API_AUTH}?action=logout`);
+    currentUser = null;
+    updateUI();
+});
+
+// ── INIT ─────────────────────────────────────────────────────
+checkSession();
+</script>
+</body>
+</html>

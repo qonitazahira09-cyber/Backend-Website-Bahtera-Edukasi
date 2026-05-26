@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <!-- =========================================== -->
+    <!-- CODE SECTION: Head Metadata - Contains document metadata and external resources -->
+    <!-- Penjelasan: Bagian ini mendefinisikan charset, viewport untuk responsivitas, judul halaman, preconnect untuk optimalisasi loading font, dan link ke stylesheet serta font eksternal. Untuk pemula: Head adalah tempat meletakkan informasi non-visual seperti link CSS dan meta tags. -->
+    <!-- =========================================== -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bahtera Edukasi - Rumah Adat Papua</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="list-rumahadt.css">
+</head>
+<body>
+    <!-- =========================================== -->
+    <!-- CODE SECTION: Site Header - Fixed header with logo, navigation, and search -->
+    <!-- Penjelasan: Header tetap di atas layar dengan logo, navigasi, dan form pencarian. Untuk pemula: Position fixed membuatnya tetap terlihat saat scroll. -->
+    <!-- =========================================== -->
+    <header class="site-header">
+        <div class="container header-inner">
+            <!-- Logo Utama -->
+            <a class="brand" href="#">
+                <img class="brand-icon" src="assetlistCard/LogoBahtera(SVG).svg" alt="Bahtera Edukasi" width="120" height="70">
+            </a>
+            <!-- Navigasi Minimalis -->
+            <nav class="main-nav" aria-label="Utama">
+                <ul>
+                    <li><a href="#home">Beranda</a></li>
+                    <li><a href="#katalog">Katalog</a></li>
+                </ul>
+            </nav>
+            <!-- Form Pencarian dengan Tombol Clear -->
+            <div class="actions">
+                <form class="search-form" role="search" action="#" method="get">
+                    <label class="search">
+                        <button class="search-btn" type="submit" aria-hidden="true" title="Cari">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m21 21l-4.343-4.343m0 0A8 8 0 1 0 5.343 5.343a8 8 0 0 0 11.314 11.314"/>
+                            </svg>
+                        </button>
+                        <input id="searchInput" name="q" type="search" placeholder="Cari..." aria-label="Cari">
+                        <button class="search-clear" type="reset" aria-label="Bersihkan pencarian" title="Bersihkan">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+                                <path fill="currentColor" d="M18.3 5.71a.996.996 0 0 0-1.41 0L12 10.59L7.11 5.7A.996.996 0 1 0 5.7 7.11L10.59 12L5.7 16.89a.996.996 0 1 0 1.41 1.41L12 13.41l4.89 4.89a.996.996 0 0 0 1.41-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4"/>
+                            </svg>
+                        </button>
+                    </label>
+                </form>
+            </div>
+        </div>
+    </header>
+    <!-- =========================================== -->
+    <!-- CODE SECTION: Main Content - Page content with header and card grid -->
+    <!-- Penjelasan: Area utama halaman dengan judul dan grid kartu. Untuk pemula: Main tag untuk konten utama, membantu aksesibilitas. -->
+    <!-- =========================================== -->
+    <main class="main-content">
+        <!-- Header Konten -->
+        <div class="page-header">
+            <h1 class="page-title">Rumah adat Papua</h1>
+            <div class="filter-controls">
+                <!-- Dropdown Filter -->
+                <!-- CHANGE_START - Tambahkan ARIA attributes untuk aksesibilitas (aria-expanded, aria-controls). Visual tetap sama karena non-rendering. -->
+                <!-- CHANGE_END -->
+                <div class="dropdown-container filter-container">
+                    <button class="filter-btn dropdown-toggle" aria-expanded="false" aria-controls="filter-menu">
+                        <span class="dropdown-text">Filter</span>
+                        <span class="dropdown-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                                <g fill="none" fill-rule="evenodd">
+                                    <path d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.019-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/>
+                                    <path fill="currentColor" d="M12.707 15.707a1 1 0 0 1-1.414 0L5.636 10.05A1 1 0 1 1 7.05 8.636l4.95 4.95l4.95-4.95a1 1 0 0 1 1.414 1.414z"/>
+                                </g>
+                            </svg>
+                        </span>
+                    </button>
+                    <div class="dropdown-menu filter-menu" id="filter-menu" role="menu">
+                        <div class="dropdown-item active" data-value="all" role="menuitem" tabindex="0">
+                            <span class="item-text">Semua</span>
+                        </div>
+                        <div class="dropdown-item" data-value="latest" role="menuitem" tabindex="0">
+                            <span class="item-text">Terbaru</span>
+                        </div>
+                        <div class="dropdown-item" data-value="popular" role="menuitem" tabindex="0">
+                            <span class="item-text">Populer</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Dropdown Sort -->
+                <div class="dropdown-container sort-container">
+                    <button class="sort-btn dropdown-toggle" aria-expanded="false" aria-controls="sort-menu">
+                        <span class="dropdown-text">Sort</span>
+                        <span class="dropdown-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                                <g fill="none" fill-rule="evenodd">
+                                    <path d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.019-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/>
+                                    <path fill="currentColor" d="M12.707 15.707a1 1 0 0 1-1.414 0L5.636 10.05A1 1 0 1 1 7.05 8.636l4.95 4.95l4.95-4.95a1 1 0 0 1 1.414 1.414z"/>
+                                </g>
+                            </svg>
+                        </span>
+                    </button>
+                    <div class="dropdown-menu sort-menu" id="sort-menu" role="menu">
+                        <div class="dropdown-item active" data-value="a-z" role="menuitem" tabindex="0">
+                            <span class="item-text">A-Z</span>
+                        </div>
+                        <div class="dropdown-item" data-value="z-a" role="menuitem" tabindex="0">
+                            <span class="item-text">Z-A</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- =========================================== -->
+        <!-- CODE SECTION: Card Grid - Grid of cultural cards -->
+        <!-- Penjelasan: Grid untuk menampilkan kartu-kartu rumah adat. Untuk pemula: Grid layout untuk responsivitas, jumlah kolom berubah berdasarkan ukuran layar. -->
+        <!-- =========================================== -->
+        <!-- Grid Card (6 Card Total) -->
+        <div class="card-grid">
+            <!-- Card 1: Mod Aki Aksa -->
+            <div class="cultural-card">
+                <div class="card-image">
+                    <img src="assetlistCard/ModAkiAksa.jpg" alt="Mod Aki Aksa - Rumah Adat Suku Arfak Papua">
+                </div>
+                <div class="card-content">
+                    <div class="card-text">
+                        <h2 class="card-title">Mod Aki Aksa</h2>
+                        <p class="card-description">
+                            Mod Aki Aksa atau Rumah Kaki Seribu merupakan rumah adat suku Arfak di Papua Barat dengan ciri khas penyangga tinggi, berfungsi sebagai hunian, tempat berkumpul, serta simbol identitas dan nilai adat masyarakat Arfak.
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-rating">
+                            <div class="star-rating">★★★★★</div>
+                            <span class="rating-value">5.0</span>
+                        </div>
+                        <div class="card-actions">
+                            <button class="action-btn read-btn">Baca</button>
+                            <button class="action-btn review-btn" onclick="openReviewModal('Mod Aki Aksa')">Ulasan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 2: Rumah Honai -->
+            <div class="cultural-card">
+                <div class="card-image">
+                    <img src="assetlistCard/RumahHonai.jpg" alt="Rumah Honai - Rumah Adat PAPUA">
+                </div>
+                <div class="card-content">
+                    <div class="card-text">
+                        <h2 class="card-title">Rumah Honai</h2>
+                        <p class="card-description">
+                            Rumah adat suku Dani yang paling terkenal, berbentuk bulat atau kerucut dengan atap jerami. Dihuni oleh laki-laki dewasa dan berfungsi untuk menghangatkan diri di daerah pegunungan yang dingin.
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-rating">
+                            <div class="star-rating">★★★★★</div>
+                            <span class="rating-value">5.0</span>
+                        </div>
+                        <div class="card-actions">
+                            <button class="action-btn read-btn">Baca</button>
+                            <button class="action-btn review-btn" onclick="openReviewModal('Rumah Honai')">Ulasan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 3: Rumah Ebei -->
+            <div class="cultural-card">
+                <div class="card-image">
+                    <img src="assetlistCard/RumahEbeai.jpg" alt="Rumah Ebei - Rumah Adat PAPUA">
+                </div>
+                <div class="card-content">
+                    <div class="card-text">
+                        <h2 class="card-title">Rumah Ebei</h2>
+                        <p class="card-description">
+                            Rumah adat perempuan suku Dani, memiliki bentuk yang serupa dengan Honai namun berukuran lebih besar. Digunakan untuk kegiatan khusus kaum perempuan, seperti memasak dan mengasuh anak.
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-rating">
+                            <div class="star-rating">★★★★★</div>
+                            <span class="rating-value">5.0</span>
+                        </div>
+                        <div class="card-actions">
+                            <button class="action-btn read-btn">Baca</button>
+                            <button class="action-btn review-btn" onclick="openReviewModal('Rumah Ebei')">Ulasan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 4: Rumah Jew -->
+            <div class="cultural-card">
+                <div class="card-image">
+                    <img src="assetlistCard/RumahJew.jpg" alt="Rumah Jew - Rumah Adat PAPUA">
+                </div>
+                <div class="card-content">
+                    <div class="card-text">
+                        <h2 class="card-title">Rumah Jew</h2>
+                        <p class="card-description">
+                            Rumah adat suku Asmat di Papua Selatan, berukuran sangat besar dan panjang. Hanya diperuntukkan bagi laki-laki yang belum menikah dan menjadi tempat upacara adat.
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-rating">
+                            <div class="star-rating">★★★★★</div>
+                            <span class="rating-value">5.0</span>
+                        </div>
+                        <div class="card-actions">
+                            <button class="action-btn read-btn">Baca</button>
+                            <button class="action-btn review-btn" onclick="openReviewModal('Rumah Jew')">Ulasan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 5: Rumah Wamai -->
+            <div class="cultural-card">
+                <div class="card-image">
+                    <img src="assetlistCard/RumahWamai.jpg" alt="Rumah Wamai - Rumah Adat Masyarakat Kaili">
+                </div>
+                <div class="card-content">
+                    <div class="card-text">
+                        <h2 class="card-title">Rumah Wamai</h2>
+                        <p class="card-description">
+                            Rumah Wamai Digunakan sebagai kandang ternak, terutama untuk babi. Biasanya berbentuk bundar atau persegi panjang, terbuat dari bahan alami, dan berada dalam satu kompleks dengan Honai dan Ebei.
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-rating">
+                            <div class="star-rating">★★★★★</div>
+                            <span class="rating-value">5.0</span>
+                        </div>
+                        <div class="card-actions">
+                            <button class="action-btn read-btn">Baca</button>
+                            <button class="action-btn review-btn" onclick="openReviewModal('Rumah Wamai')">Ulasan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 6: Rumah Adat Lainnya -->
+            <div class="cultural-card">
+                <div class="card-image">
+                    <img src="assetlistCard/" alt="Rumah Adat Lainnya - Koleksi Rumah Adat Nusantara">
+                </div>
+                <div class="card-content">
+                    <div class="card-text">
+                        <h2 class="card-title">Rumah Adat Lainnya</h2>
+                        <p class="card-description">
+                            Koleksi lengkap rumah adat dari berbagai daerah di Indonesia yang menampilkan kekayaan arsitektur tradisional, filosofi budaya, dan nilai-nilai lokal yang terkandung di dalamnya.
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-rating">
+                            <div class="star-rating">★★★★★</div>
+                            <span class="rating-value">5.0</span>
+                        </div>
+                        <div class="card-actions">
+                            <button class="action-btn read-btn">Baca</button>
+                            <button class="action-btn review-btn" onclick="openReviewModal('Rumah Adat Lainnya')">Ulasan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- =========================================== -->
+    <!-- CODE SECTION: Review Modal - Overlay and form container -->
+    <!-- Penjelasan: Modal untuk form ulasan yang muncul di atas konten utama. -->
+    <!-- =========================================== -->
+    <div id="review-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title">Ulasan & Rating <span id="modal-item-name">Rumah Adat</span></h2>
+                <button class="close-button" aria-label="Tutup modal" onclick="closeReviewModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="divider"></div>
+            <div class="modal-content">
+                <!-- =========================================== -->
+                <!-- CODE SECTION: Overall Rating - Display average rating -->
+                <!-- Penjelasan: Menampilkan rating keseluruhan dengan angka dan bintang. Untuk pemula: Gunakan ikon Font Awesome untuk bintang. -->
+                <!-- =========================================== -->
+                <div class="overall-rating">
+                    <div class="rating-number">4.5</div>
+                    <div class="stars-container">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <span class="max-rating">5.0</span>
+                    </div>
+                </div>
+                <!-- =========================================== -->
+                <!-- CODE SECTION: Rating Distribution - Bars for each star level -->
+                <!-- Penjelasan: Distribusi rating per bintang dengan progress bar. Untuk pemula: Lebar progress-fill diatur inline untuk fleksibilitas dinamis. -->
+                <!-- =========================================== -->
+                <div class="rating-distribution">
+                    <div class="rating-bar">
+                        <span class="star-label">5 star</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 40%"></div>
+                        </div>
+                        <span class="review-count">2</span>
+                    </div>
+                    <div class="rating-bar">
+                        <span class="star-label">4 star</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 40%"></div>
+                        </div>
+                        <span class="review-count">2</span>
+                    </div>
+                    <div class="rating-bar">
+                        <span class="star-label">3 star</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="review-count">0</span>
+                    </div>
+                    <div class="rating-bar">
+                        <span class="star-label">2 star</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="review-count">0</span>
+                    </div>
+                    <div class="rating-bar">
+                        <span class="star-label">1 star</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="review-count">0</span>
+                    </div>
+                </div>
+                <!-- =========================================== -->
+                <!-- CODE SECTION: Write Review Button - Button to open form -->
+                <!-- Penjelasan: Tombol untuk membuka form ulasan. Untuk pemula: ID digunakan oleh JS untuk event listener. -->
+                <!-- =========================================== -->
+                <button class="write-review-btn" id="open-review-form">
+                    <i class="fas fa-plus"></i> Tulis Ulasan
+                </button>
+                <!-- =========================================== -->
+                <!-- CODE SECTION: Review Form - Form for submitting new review -->
+                <!-- Penjelasan: Form ulasan dengan rating bintang, input nama, dan textarea. Untuk pemula: Form ini disembunyikan awalnya dan di-toggle via JS. -->
+                <!-- =========================================== -->
+                <!-- FORM ULASAN DENGAN FOOTER STICKY -->
+                <div class="review-form" id="review-form">
+                    <div class="form-scrollable">
+                        <h3 class="form-title">Penilaian Anda</h3>
+                        <div class="star-rating">
+                            <i class="fas fa-star active"></i>
+                            <i class="fas fa-star active"></i>
+                            <i class="fas fa-star active"></i>
+                            <i class="fas fa-star active"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                        <div class="form-group">
+                            <label for="user-name" class="form-label">Nama Anda</label>
+                            <input type="text" id="user-name" class="form-input" placeholder="Masukan nama kamu">
+                        </div>
+                        <div class="form-group">
+                            <label for="user-review" class="form-label">Ulasan Anda</label>
+                            <textarea id="user-review" class="form-textarea" placeholder="Tuliskan pendapat Anda tentang konten budaya ini." rows="4"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn-cancel" id="cancel-form">Cancel</button>
+                        <button class="btn-submit" id="submit-review">Submit Review</button>
+                    </div>
+                </div>
+                <!-- =========================================== -->
+                <!-- CODE SECTION: Reviews Container - List of existing reviews -->
+                <!-- Penjelasan: Container untuk daftar ulasan pengguna. Untuk pemula: Setiap review-item adalah satu ulasan dengan avatar, teks, dan like. -->
+                <!-- =========================================== -->
+                <div class="reviews-container">
+                    <div class="review-item">
+                        <div class="user-avatar">DC</div>
+                        <div class="review-content">
+                            <div class="user-info">
+                                <div class="user-name">David Chan</div>
+                                <div class="review-time">3 week ago</div>
+                            </div>
+                            <p class="review-text">Desain arsitekturnya sangat simbolis dan penuh makna, bukan sekadar estetika.</p>
+                            <div class="user-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <div class="like-container">
+                                <button class="like-btn">
+                                    <i class="far fa-thumbs-up"></i> 10
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="review-divider"></div>
+                    <div class="review-item">
+                        <div class="user-avatar">SJ</div>
+                        <div class="review-content">
+                            <div class="user-info">
+                                <div class="user-name">Sarah Jhonson</div>
+                                <div class="review-time">1 month ago</div>
+                            </div>
+                            <p class="review-text">Setiap ukiran memiliki cerita yang mendalam tentang kehidupan masyarakat adat setempat. Sangat menginspirasi!</p>
+                            <div class="user-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <div class="like-container">
+                                <button class="like-btn">
+                                    <i class="far fa-thumbs-up"></i> 8
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================== -->
+    <!-- CODE SECTION: JavaScript - Script for dropdown functionality and review modal -->
+    <!-- Penjelasan: Script ini menangani toggle dropdown dan animasi grid kartu, serta modal ulasan. Untuk pemula: Gunakan DOMContentLoaded jika di file terpisah, tapi di sini langsung. -->
+    <!-- =========================================== -->
+    <script>
+        // === SECTION SWITCH: Initialization -> Event Listeners ===
+// Handler: querySelectorAll for dropdowns - Setup dropdown functionality
+// Purpose: Handle toggle, close, and select for dropdowns.
+// Inputs: None
+// Returns: None
+// Side-effects: Adds event listeners, modifies classes and styles.
+document.querySelectorAll('.dropdown-container').forEach(container => {
+    const toggle = container.querySelector('.dropdown-toggle');
+    const menu = container.querySelector('.dropdown-menu');
+    const cardGrid = document.querySelector('.card-grid');
+    toggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isOpen = menu.classList.contains('show');
+        // Close all other dropdowns
+        document.querySelectorAll('.dropdown-menu').forEach(m => {
+            if (m !== menu) m.classList.remove('show');
+        });
+        // Toggle current dropdown
+        menu.classList.toggle('show');
+        // Update ARIA expanded
+        toggle.setAttribute('aria-expanded', menu.classList.contains('show'));
+        // Animate card grid when dropdown opens/closes
+        if (menu.classList.contains('show')) {
+            // Calculate dropdown height
+            const dropdownHeight = menu.offsetHeight;
+            // Add active class to card grid to create space
+            cardGrid.classList.add('dropdown-active');
+            // Set margin with transition
+            /* CHANGE_START - Normalisasi unit ke rem di JS inline styles (1.25rem ≈ 20px). */
+            /* CHANGE_END */
+            cardGrid.style.marginTop = `${(dropdownHeight / 16) + 1.25}rem`;
+        } else {
+            // Remove active class and reset margin
+            cardGrid.classList.remove('dropdown-active');
+            cardGrid.style.marginTop = '';
+        }
+    });
+});
+// === SECTION SWITCH: Event Listeners -> Close Outside ===
+// Handler: document click - Close dropdown on outside click
+// Purpose: Detect clicks outside dropdown.
+// Inputs: Click event
+// Returns: None
+// Side-effects: Removes show class, resets ARIA and styles.
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.dropdown-container')) {
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            menu.classList.remove('show');
+        });
+        // Reset ARIA expanded
+        document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+            toggle.setAttribute('aria-expanded', 'false');
+        });
+        // Reset card grid margin
+        const cardGrid = document.querySelector('.card-grid');
+        cardGrid.classList.remove('dropdown-active');
+        cardGrid.style.marginTop = '';
+    }
+});
+// === SECTION SWITCH: Close Outside -> Item Select ===
+// Handler: dropdown-item click - Handle item selection
+// Purpose: Update toggle text, active class, close menu.
+// Inputs: Click event, data-value
+// Returns: None
+// Side-effects: Updates text, classes, logs value, resets styles.
+document.querySelectorAll('.dropdown-item').forEach(item => {
+    item.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const value = this.getAttribute('data-value');
+        const menu = this.closest('.dropdown-menu');
+        const container = this.closest('.dropdown-container');
+        const toggle = container.querySelector('.dropdown-toggle');
+        // Update button text
+        const text = this.textContent;
+        toggle.querySelector('.dropdown-text').textContent = text;
+        // Update active class
+        menu.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+        // Close menu
+        menu.classList.remove('show');
+        // Update ARIA expanded
+        toggle.setAttribute('aria-expanded', 'false');
+        // Reset card grid position
+        const cardGrid = document.querySelector('.card-grid');
+        cardGrid.classList.remove('dropdown-active');
+        cardGrid.style.marginTop = '';
+        // Here you can add logic to filter/sort cards based on selected value
+        console.log('Selected:', value);
+    });
+});
+
+// === SECTION SWITCH: Review Modal Functionality ===
+// Handler: Functions for opening/closing review modal
+// Purpose: Toggle visibility of the review modal.
+// Inputs: None
+// Returns: None
+// Side-effects: Changes display style of modal overlay.
+function openReviewModal(itemName) {
+    document.getElementById('modal-item-name').textContent = itemName;
+    document.getElementById('review-modal').style.display = 'flex';
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+}
+
+function closeReviewModal() {
+    document.getElementById('review-modal').style.display = 'none';
+    document.body.style.overflow = ''; // Restore scrolling
+}
+
+// === SECTION SWITCH: Review Form Interactions ===
+// Handler: Event listeners for review form
+// Purpose: Handle form open/close, submission, and star rating.
+// Inputs: Click events
+// Returns: None
+// Side-effects: Toggles form visibility, handles validation, updates stars.
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('review-form');
+    const openBtn = document.getElementById('open-review-form');
+    const cancelBtn = document.getElementById('cancel-form');
+    const submitBtn = document.getElementById('submit-review');
+    const stars = form.querySelectorAll('.star-rating i');
+    const userName = document.getElementById('user-name');
+    const userReview = document.getElementById('user-review');
+    let isFormOpen = false;
+
+    // Handler: openBtn click - Toggle form visibility with animation
+    openBtn.addEventListener('click', () => {
+        isFormOpen = true;
+        form.style.maxHeight = form.scrollHeight + 'px';
+        form.style.opacity = '1';
+        form.style.padding = '0 24px 24px';
+        openBtn.style.display = 'none';
+    });
+
+    // Handler: cancelBtn click - Hide form and reset
+    cancelBtn.addEventListener('click', () => {
+        isFormOpen = false;
+        form.style.maxHeight = '0';
+        form.style.opacity = '0';
+        form.style.padding = '0 24px';
+        openBtn.style.display = 'flex';
+        resetForm();
+    });
+
+    // Handler: submitBtn click - Validate and submit review
+    submitBtn.addEventListener('click', () => {
+        const name = userName.value.trim();
+        const review = userReview.value.trim();
+        const rating = document.querySelectorAll('.star-rating .active').length;
+        if (!name || !review || rating === 0) {
+            alert('Nama, ulasan, dan rating minimal 1 bintang wajib diisi!');
+            return;
+        }
+        alert(`Ulasan berhasil dikirim!
+Rating: ${rating} bintang
+Nama: ${name}
+Ulasan: ${review}`);
+        isFormOpen = false;
+        form.style.maxHeight = '0';
+        form.style.opacity = '0';
+        form.style.padding = '0 24px';
+        openBtn.style.display = 'flex';
+        resetForm();
+    });
+
+    // Handler: stars click - Update star rating
+    stars.forEach((star, index) => {
+        star.addEventListener('click', () => {
+            stars.forEach((s, i) => {
+                if (i <= index) {
+                    s.classList.add('active');
+                    s.classList.remove('far');
+                    s.classList.add('fas');
+                } else {
+                    s.classList.remove('active');
+                    s.classList.add('far');
+                    s.classList.remove('fas');
+                }
+            });
+        });
+    });
+
+    // Handler: resetForm - Reset form to initial state
+    function resetForm() {
+        userName.value = '';
+        userReview.value = '';
+        // Reset stars to default (4 filled)
+        stars.forEach((star, index) => {
+            if (index < 4) {
+                star.classList.add('active', 'fas');
+                star.classList.remove('far');
+            } else {
+                star.classList.remove('active', 'fas');
+                star.classList.add('far');
+            }
+        });
+    }
+});
+
+// === SECTION SWITCH: Close Modal on Outside Click ===
+// Handler: Click on modal overlay - Close modal if clicked outside content
+// Purpose: Improve UX by closing modal when clicking the darkened background.
+// Inputs: Click event
+// Returns: None
+// Side-effects: Closes modal if clicked on overlay area.
+document.getElementById('review-modal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeReviewModal();
+    }
+});
+    </script>
+</body>
+</html>

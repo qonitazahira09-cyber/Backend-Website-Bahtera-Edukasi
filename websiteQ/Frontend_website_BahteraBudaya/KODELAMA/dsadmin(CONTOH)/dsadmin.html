@@ -1,0 +1,1986 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Konten Budaya Indonesia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6D2323;
+            --secondary-color: #FFFFFF;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        /* Dark mode scrollbar */
+        .dark ::-webkit-scrollbar-track {
+            background: #374151;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #6b7280;
+        }
+        
+        /* Animations */
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        /* Toast notification */
+        .toast {
+            transform: translateX(400px);
+            transition: transform 0.3s ease-out;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        /* Chart container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        
+        /* Custom styles for primary color */
+        .bg-primary {
+            background-color: var(--primary-color);
+        }
+        .text-primary {
+            color: var(--primary-color);
+        }
+        .border-primary {
+            border-color: var(--primary-color);
+        }
+        .hover\:bg-primary:hover {
+            background-color: var(--primary-color);
+        }
+        .focus\:ring-primary:focus {
+            ring-color: var(--primary-color);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white dark:bg-gray-800 shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-40">
+        <div class="p-6 bg-primary">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                    <i class="fas fa-landmark text-primary text-xl"></i>
+                </div>
+                <h1 class="text-xl font-bold text-white">BudayaID</h1>
+            </div>
+        </div>
+        
+        <nav class="mt-6">
+            <ul class="space-y-1 px-4">
+                <li>
+                    <a href="#" onclick="showSection('dashboard')" class="nav-item flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <i class="fas fa-dashboard w-5"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showSection('reports')" class="nav-item flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <i class="fas fa-chart-line w-5"></i>
+                        <span>Laporan Aktivitas</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showSection('content')" class="nav-item flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <i class="fas fa-book w-5"></i>
+                        <span>Konten Budaya</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showSection('reviews')" class="nav-item flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <i class="fas fa-star w-5"></i>
+                        <span>Ulasan & Rating</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showSection('categories')" class="nav-item flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <i class="fas fa-tags w-5"></i>
+                        <span>Kategori</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showSection('users')" class="nav-item flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <i class="fas fa-users w-5"></i>
+                        <span>Pengguna</span>
+                    </a>
+                </li>
+                <li id="adminManagementLink" class="hidden">
+                    <a href="#" onclick="showSection('admin')" class="nav-item flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <i class="fas fa-user-shield w-5"></i>
+                        <span>Manajemen Admin</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showSection('profile')" class="nav-item flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <i class="fas fa-user w-5"></i>
+                        <span>Profil</span>
+                    </a>
+                </li>
+                <li class="pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <a href="#" onclick="logout()" class="flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
+                        <i class="fas fa-sign-out-alt w-5"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="lg:ml-64">
+        <!-- Topbar -->
+        <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-30">
+            <div class="flex items-center justify-between px-4 py-3">
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleSidebar()" class="lg:hidden text-gray-600 dark:text-gray-300">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <div class="relative">
+                        <input type="text" placeholder="Cari..." class="w-64 px-4 py-2 pl-10 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- Dark Mode Toggle -->
+                    <button onclick="toggleDarkMode()" class="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg transition-colors">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:block"></i>
+                    </button>
+                    
+                    <!-- Notifications -->
+                    <div class="relative">
+                        <button onclick="toggleNotifications()" class="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg transition-colors relative">
+                            <i class="fas fa-bell"></i>
+                            <span id="notificationBadge" class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                            <span id="notificationCount" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                        </button>
+                        <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+                            <div class="p-4 border-b dark:border-gray-700">
+                                <h3 class="font-semibold text-gray-800 dark:text-white">Notifikasi</h3>
+                            </div>
+                            <div class="max-h-96 overflow-y-auto">
+                                <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <p class="text-sm text-gray-800 dark:text-white">Konten baru: Tarian Pendet</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">2 menit yang lalu</p>
+                                </div>
+                                <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <p class="text-sm text-gray-800 dark:text-white">Ulasan baru: 5 bintang</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">15 menit yang lalu</p>
+                                </div>
+                                <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <p class="text-sm text-gray-800 dark:text-white">Rating rendah terdeteksi</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">1 jam yang lalu</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- User Menu -->
+                    <div class="relative">
+                        <button onclick="toggleUserMenu()" class="flex items-center space-x-2 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg transition-colors">
+                            <img src="https://picsum.photos/seed/admin/40/40" alt="Admin" class="w-8 h-8 rounded-full">
+                            <span class="hidden md:block text-gray-700 dark:text-gray-300">Admin</span>
+                            <i class="fas fa-chevron-down text-xs text-gray-500"></i>
+                        </button>
+                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+                            <a href="#" onclick="showSection('profile')" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <i class="fas fa-user mr-2"></i> Profil
+                            </a>
+                            <a href="#" onclick="showSection('settings')" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <i class="fas fa-cog mr-2"></i> Pengaturan
+                            </a>
+                            <hr class="my-2 dark:border-gray-700">
+                            <a href="#" onclick="logout()" class="block px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Sections -->
+        <main class="p-6">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Dashboard</h2>
+                
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm">Total Pengguna</p>
+                                <p class="text-2xl font-bold text-gray-800 dark:text-white mt-1">12,543</p>
+                                <p class="text-sm text-green-600 mt-2">
+                                    <i class="fas fa-arrow-up"></i> 12% dari bulan lalu
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-users text-blue-600 dark:text-blue-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm">Total Konten</p>
+                                <p class="text-2xl font-bold text-gray-800 dark:text-white mt-1">856</p>
+                                <p class="text-sm text-green-600 mt-2">
+                                    <i class="fas fa-arrow-up"></i> 8% dari bulan lalu
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-book text-green-600 dark:text-green-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm">Ulasan Baru</p>
+                                <p class="text-2xl font-bold text-gray-800 dark:text-white mt-1">234</p>
+                                <p class="text-sm text-red-600 mt-2">
+                                    <i class="fas fa-arrow-down"></i> 3% dari bulan lalu
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-star text-yellow-600 dark:text-yellow-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm">Kunjungan Hari Ini</p>
+                                <p class="text-2xl font-bold text-gray-800 dark:text-white mt-1">3,421</p>
+                                <p class="text-sm text-green-600 mt-2">
+                                    <i class="fas fa-arrow-up"></i> 15% dari kemarin
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-eye text-purple-600 dark:text-purple-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Kunjungan 7 Hari Terakhir</h3>
+                        <div class="chart-container">
+                            <canvas id="visitChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Distribusi Konten</h3>
+                        <div class="chart-container">
+                            <canvas id="contentChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Activity -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mt-6">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Aktivitas Terbaru</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b dark:border-gray-700">
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Waktu</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Pengguna</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Aktivitas</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">10:30</td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">Budi Santoso</td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">Menambah konten: Rumah Gadang</td>
+                                    <td class="py-3 px-4"><span class="px-2 py-1 text-xs bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400 rounded">Sukses</span></td>
+                                </tr>
+                                <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">09:45</td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">Siti Aminah</td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">Mengedit konten: Batik</td>
+                                    <td class="py-3 px-4"><span class="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400 rounded">Diupdate</span></td>
+                                </tr>
+                                <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">08:20</td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">Ahmad Fauzi</td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">Login sistem</td>
+                                    <td class="py-3 px-4"><span class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 rounded">Aktif</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports" class="content-section hidden">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Laporan Aktivitas</h2>
+                
+                <!-- Filter Options -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+                    <div class="flex flex-wrap gap-4">
+                        <select class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                            <option>Harian</option>
+                            <option>Mingguan</option>
+                            <option>Bulanan</option>
+                        </select>
+                        <input type="date" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                        <input type="date" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                        <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                            <i class="fas fa-filter mr-2"></i>Filter
+                        </button>
+                        <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                            <i class="fas fa-download mr-2"></i>Export
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Activity Charts -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Login Activity</h3>
+                        <div class="chart-container">
+                            <canvas id="loginChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Content Interaction</h3>
+                        <div class="chart-container">
+                            <canvas id="interactionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Detailed Activity Table -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Detail Aktivitas</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b dark:border-gray-700">
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">ID</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Waktu</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">IP Address</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Device</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Aktivitas</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">#001</td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">2024-01-15 10:30:45</td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">192.168.1.1</td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">Chrome / Windows</td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">Login</td>
+                                    <td class="py-3 px-4"><span class="px-2 py-1 text-xs bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400 rounded">Sukses</span></td>
+                                </tr>
+                                <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">#002</td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">2024-01-15 10:35:12</td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">192.168.1.1</td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">Chrome / Windows</td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">View Content</td>
+                                    <td class="py-3 px-4"><span class="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400 rounded">Aktif</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Content Management Section -->
+            <section id="content" class="content-section hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Manajemen Konten Budaya</h2>
+                    <button onclick="openAddContentModal()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Tambah Konten
+                    </button>
+                </div>
+                
+                <!-- Filters -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <input type="text" placeholder="Cari konten..." class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                        <select class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                            <option>Semua Kategori</option>
+                            <option>Rumah Adat</option>
+                            <option>Pakaian Adat</option>
+                            <option>Tarian</option>
+                            <option>Makanan</option>
+                            <option>Musik Tradisional</option>
+                        </select>
+                        <select class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                            <option>Semua Provinsi</option>
+                            <option>Aceh</option>
+                            <option>Sumatera Utara</option>
+                            <option>Jawa Barat</option>
+                            <option>Bali</option>
+                        </select>
+                        <select class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                            <option>Urutkan</option>
+                            <option>Terbaru</option>
+                            <option>Terpopuler</option>
+                            <option>Rating Tertinggi</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Content Table -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
+                    <div class="p-4 border-b dark:border-gray-700 flex justify-between items-center">
+                        <div class="flex items-center space-x-4">
+                            <input type="checkbox" class="rounded">
+                            <button class="text-gray-600 dark:text-gray-300 hover:text-red-600" onclick="bulkDelete()">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button class="text-gray-600 dark:text-gray-300 hover:text-green-600" onclick="bulkPublish()">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="text-gray-600 dark:text-gray-300 hover:text-gray-800" onclick="bulkUnpublish()">
+                                <i class="fas fa-eye-slash"></i>
+                            </button>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600">
+                                <i class="fas fa-file-csv mr-1"></i>CSV
+                            </button>
+                            <button class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600">
+                                <i class="fas fa-file-excel mr-1"></i>Excel
+                            </button>
+                            <button class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600">
+                                <i class="fas fa-file-pdf mr-1"></i>PDF
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b dark:border-gray-700">
+                                    <th class="text-left py-3 px-4">
+                                        <input type="checkbox" class="rounded">
+                                    </th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Judul</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Kategori</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Provinsi</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Rating</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Status</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <td class="py-3 px-4">
+                                        <input type="checkbox" class="rounded">
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center space-x-3">
+                                            <img src="https://picsum.photos/seed/rumahgadang/50/50" alt="Rumah Gadang" class="w-10 h-10 rounded">
+                                            <div>
+                                                <p class="font-medium text-gray-800 dark:text-white">Rumah Gadang</p>
+                                                <p class="text-sm text-gray-500 dark:text-gray-400">Ditambah 2 hari lalu</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">Rumah Adat</td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">Sumatera Barat</td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center">
+                                            <div class="flex text-yellow-400">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star-half-alt"></i>
+                                            </div>
+                                            <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">4.5</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <span class="px-2 py-1 text-xs bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400 rounded">Published</span>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex space-x-2">
+                                            <button class="text-blue-600 hover:text-blue-800" onclick="openEditContentModal()">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-800" onclick="deleteContent()">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                            <button class="text-gray-600 hover:text-gray-800">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <td class="py-3 px-4">
+                                        <input type="checkbox" class="rounded">
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center space-x-3">
+                                            <img src="https://picsum.photos/seed/kebaya/50/50" alt="Kebaya" class="w-10 h-10 rounded">
+                                            <div>
+                                                <p class="font-medium text-gray-800 dark:text-white">Kebaya</p>
+                                                <p class="text-sm text-gray-500 dark:text-gray-400">Ditambah 5 hari lalu</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">Pakaian Adat</td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">Jawa Tengah</td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center">
+                                            <div class="flex text-yellow-400">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                            </div>
+                                            <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">5.0</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <span class="px-2 py-1 text-xs bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400 rounded">Published</span>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex space-x-2">
+                                            <button class="text-blue-600 hover:text-blue-800" onclick="openEditContentModal()">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-800" onclick="deleteContent()">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                            <button class="text-gray-600 hover:text-gray-800">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reviews Section -->
+            <section id="reviews" class="content-section hidden">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Ulasan & Rating</h2>
+                
+                <!-- Review Filters -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <input type="text" placeholder="Cari ulasan..." class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                        <select class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                            <option>Semua Konten</option>
+                            <option>Rumah Gadang</option>
+                            <option>Kebaya</option>
+                            <option>Pendet</option>
+                        </select>
+                        <select class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                            <option>Semua Rating</option>
+                            <option>5 Bintang</option>
+                            <option>4 Bintang</option>
+                            <option>3 Bintang</option>
+                            <option>2 Bintang</option>
+                            <option>1 Bintang</option>
+                        </select>
+                        <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                            <i class="fas fa-filter mr-2"></i>Filter
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Reviews List -->
+                <div class="space-y-4">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-start space-x-4">
+                                <img src="https://picsum.photos/seed/user1/40/40" alt="User" class="w-10 h-10 rounded-full">
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2 mb-1">
+                                        <h4 class="font-semibold text-gray-800 dark:text-white">Ahmad Rizki</h4>
+                                        <div class="flex text-yellow-400 text-sm">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Untuk konten: Rumah Gadang</p>
+                                    <p class="text-gray-700 dark:text-gray-300">Sangat informatif! Penjelasannya detail dan gambarnya bagus. Tambahkan lagi konten tentang rumah adat lainnya ya.</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">2 jam yang lalu</p>
+                                </div>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="text-red-600 hover:text-red-800" title="Tandai">
+                                    <i class="fas fa-flag"></i>
+                                </button>
+                                <button class="text-gray-600 hover:text-gray-800" title="Nonaktifkan" onclick="disableReview()">
+                                    <i class="fas fa-eye-slash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-start space-x-4">
+                                <img src="https://picsum.photos/seed/user2/40/40" alt="User" class="w-10 h-10 rounded-full">
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2 mb-1">
+                                        <h4 class="font-semibold text-gray-800 dark:text-white">Siti Nurhaliza</h4>
+                                        <div class="flex text-yellow-400 text-sm">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="far fa-star"></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Untuk konten: Kebaya</p>
+                                    <p class="text-gray-700 dark:text-gray-300">Bagus, tapi kurang variasi gambar. Mohon ditambahkan foto kebaya dari berbagai daerah.</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">5 jam yang lalu</p>
+                                </div>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="text-red-600 hover:text-red-800" title="Tandai">
+                                    <i class="fas fa-flag"></i>
+                                </button>
+                                <button class="text-gray-600 hover:text-gray-800" title="Nonaktifkan" onclick="disableReview()">
+                                    <i class="fas fa-eye-slash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Categories Section -->
+            <section id="categories" class="content-section hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Manajemen Kategori</h2>
+                    <button onclick="openAddCategoryModal()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Tambah Kategori
+                    </button>
+                </div>
+                
+                <!-- Categories Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-home text-blue-600 dark:text-blue-400 text-xl"></i>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="text-blue-600 hover:text-blue-800" onclick="openEditCategoryModal()">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="text-red-600 hover:text-red-800" onclick="deleteCategory()">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <h3 class="font-semibold text-gray-800 dark:text-white mb-2">Rumah Adat</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Kumpulan rumah adat dari berbagai daerah di Indonesia</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600 dark:text-gray-400">45 konten</span>
+                            <span class="px-2 py-1 text-xs bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400 rounded">Aktif</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-tshirt text-purple-600 dark:text-purple-400 text-xl"></i>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="text-blue-600 hover:text-blue-800" onclick="openEditCategoryModal()">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="text-red-600 hover:text-red-800" onclick="deleteCategory()">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <h3 class="font-semibold text-gray-800 dark:text-white mb-2">Pakaian Adat</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Pakaian tradisional khas setiap daerah</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600 dark:text-gray-400">38 konten</span>
+                            <span class="px-2 py-1 text-xs bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400 rounded">Aktif</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-pink-100 dark:bg-pink-900/20 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-music text-pink-600 dark:text-pink-400 text-xl"></i>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="text-blue-600 hover:text-blue-800" onclick="openEditCategoryModal()">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="text-red-600 hover:text-red-800" onclick="deleteCategory()">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <h3 class="font-semibold text-gray-800 dark:text-white mb-2">Musik Tradisional</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Alat musik dan lagu tradisional Indonesia</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600 dark:text-gray-400">52 konten</span>
+                            <span class="px-2 py-1 text-xs bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400 rounded">Aktif</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Users Section -->
+            <section id="users" class="content-section hidden">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Manajemen Pengguna</h2>
+                
+                <!-- Tab untuk memisahkan Admin dan User Biasa -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow mb-6">
+                    <div class="border-b dark:border-gray-700">
+                        <nav class="flex -mb-px">
+                            <button onclick="switchUserTab('admin')" id="adminTab" class="tab-button px-6 py-3 border-b-2 border-primary text-primary font-medium">
+                                Admin
+                            </button>
+                            <button onclick="switchUserTab('user')" id="userTab" class="tab-button px-6 py-3 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                                Pengguna Biasa
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+                
+                <!-- Admin Table -->
+                <div id="adminTable" class="bg-white dark:bg-gray-800 rounded-lg shadow">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b dark:border-gray-700">
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Nama</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Email</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Role</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Status</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Terakhir Login</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center space-x-3">
+                                            <img src="https://picsum.photos/seed/admin1/40/40" alt="Admin" class="w-10 h-10 rounded-full">
+                                            <span class="font-medium text-gray-800 dark:text-white">Admin Utama</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">admin@budayaid.com</td>
+                                    <td class="py-3 px-4">
+                                        <span class="px-2 py-1 text-xs bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-400 rounded">Super Admin</span>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <span class="px-2 py-1 text-xs bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400 rounded">Aktif</span>
+                                    </td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">2 jam yang lalu</td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex space-x-2">
+                                            <button class="text-blue-600 hover:text-blue-800">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-800">
+                                                <i class="fas fa-ban"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center space-x-3">
+                                            <img src="https://picsum.photos/seed/admin2/40/40" alt="Admin" class="w-10 h-10 rounded-full">
+                                            <span class="font-medium text-gray-800 dark:text-white">Siti Aminah</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">siti@budayaid.com</td>
+                                    <td class="py-3 px-4">
+                                        <span class="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400 rounded">Editor</span>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <span class="px-2 py-1 text-xs bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400 rounded">Aktif</span>
+                                    </td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">1 hari yang lalu</td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex space-x-2">
+                                            <button class="text-blue-600 hover:text-blue-800">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-800">
+                                                <i class="fas fa-ban"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Regular Users Table (Hidden by default) -->
+                <div id="userTable" class="bg-white dark:bg-gray-800 rounded-lg shadow hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b dark:border-gray-700">
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Nama</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Email</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Status</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Terakhir Login</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center space-x-3">
+                                            <img src="https://picsum.photos/seed/user5/40/40" alt="User" class="w-10 h-10 rounded-full">
+                                            <span class="font-medium text-gray-800 dark:text-white">Ahmad Rizki</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">ahmad@email.com</td>
+                                    <td class="py-3 px-4">
+                                        <span class="px-2 py-1 text-xs bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400 rounded">Aktif</span>
+                                    </td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">3 jam yang lalu</td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex space-x-2">
+                                            <button class="text-blue-600 hover:text-blue-800">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-800">
+                                                <i class="fas fa-ban"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Admin Management Section -->
+            <section id="admin" class="content-section hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Manajemen Admin</h2>
+                    <button onclick="openAddAdminModal()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                        <i class="fas fa-user-plus mr-2"></i>Tambah Admin
+                    </button>
+                </div>
+                
+                <!-- Admin Table -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b dark:border-gray-700">
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Nama</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Email</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Role</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Status</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Terakhir Login</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-400">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center space-x-3">
+                                            <img src="https://picsum.photos/seed/admin1/40/40" alt="Admin" class="w-10 h-10 rounded-full">
+                                            <span class="font-medium text-gray-800 dark:text-white">Admin Utama</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">admin@budayaid.com</td>
+                                    <td class="py-3 px-4">
+                                        <span class="px-2 py-1 text-xs bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-400 rounded">Super Admin</span>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <span class="px-2 py-1 text-xs bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400 rounded">Aktif</span>
+                                    </td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">2 jam yang lalu</td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex space-x-2">
+                                            <button class="text-blue-600 hover:text-blue-800" onclick="openEditAdminModal()">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-800" onclick="deleteAdmin()">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center space-x-3">
+                                            <img src="https://picsum.photos/seed/admin2/40/40" alt="Admin" class="w-10 h-10 rounded-full">
+                                            <span class="font-medium text-gray-800 dark:text-white">Siti Aminah</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">siti@budayaid.com</td>
+                                    <td class="py-3 px-4">
+                                        <span class="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400 rounded">Editor</span>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <span class="px-2 py-1 text-xs bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400 rounded">Aktif</span>
+                                    </td>
+                                    <td class="py-3 px-4 text-gray-800 dark:text-gray-300">1 hari yang lalu</td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex space-x-2">
+                                            <button class="text-blue-600 hover:text-blue-800" onclick="openEditAdminModal()">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-800" onclick="deleteAdmin()">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Section -->
+            <section id="profile" class="content-section hidden">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Profil Admin</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Profile Info -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                            <div class="text-center">
+                                <img src="https://picsum.photos/seed/admin/150/150" alt="Admin" class="w-32 h-32 rounded-full mx-auto mb-4">
+                                <h3 class="text-xl font-semibold text-gray-800 dark:text-white">Admin Utama</h3>
+                                <p class="text-gray-500 dark:text-gray-400">admin@budayaid.com</p>
+                                <span class="inline-block mt-2 px-3 py-1 text-sm bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-400 rounded">Super Admin</span>
+                            </div>
+                            
+                            <div class="mt-6 space-y-3">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600 dark:text-gray-400">Bergabung</span>
+                                    <span class="text-gray-800 dark:text-white">Jan 2024</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600 dark:text-gray-400">Konten Dibuat</span>
+                                    <span class="text-gray-800 dark:text-white">156</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600 dark:text-gray-400">Terakhir Login</span>
+                                    <span class="text-gray-800 dark:text-white">2 jam lalu</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Edit Profile Form -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6">Edit Profil</h3>
+                            
+                            <form class="space-y-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nama Lengkap</label>
+                                        <input type="text" value="Admin Utama" class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                                        <input type="email" value="admin@budayaid.com" class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bio</label>
+                                    <textarea rows="3" class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">Admin sistem manajemen konten budaya Indonesia</textarea>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Foto Profil</label>
+                                    <div class="flex items-center space-x-4">
+                                        <img src="https://picsum.photos/seed/admin/80/80" alt="Profile" class="w-20 h-20 rounded-full">
+                                        <button type="button" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                                            Ganti Foto
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="pt-4">
+                                    <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                                        Simpan Perubahan
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Change Password -->
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mt-6">
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6">Ganti Password</h3>
+                            
+                            <form class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password Saat Ini</label>
+                                    <input type="password" class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password Baru</label>
+                                    <input type="password" class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Konfirmasi Password Baru</label>
+                                    <input type="password" class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                                </div>
+                                
+                                <div class="pt-4">
+                                    <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                                        Ganti Password
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add Content Modal -->
+    <div id="addContentModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b dark:border-gray-700">
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-white">Tambah Konten Budaya</h3>
+            </div>
+            <div class="p-6">
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Judul</label>
+                        <input type="text" class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Kategori</label>
+                            <select class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                                <option>Rumah Adat</option>
+                                <option>Pakaian Adat</option>
+                                <option>Tarian</option>
+                                <option>Makanan</option>
+                                <option>Musik Tradisional</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Provinsi</label>
+                            <select class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                                <option>Aceh</option>
+                                <option>Sumatera Utara</option>
+                                <option>Jawa Barat</option>
+                                <option>Bali</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Deskripsi</label>
+                        <textarea rows="4" class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Gambar</label>
+                        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
+                            <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
+                            <p class="text-gray-500 dark:text-gray-400">Drag & drop atau klik untuk upload</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="closeAddContentModal()" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                            Batal
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">
+                            Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Content Modal -->
+    <div id="editContentModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b dark:border-gray-700">
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-white">Edit Konten Budaya</h3>
+            </div>
+            <div class="p-6">
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Judul</label>
+                        <input type="text" value="Rumah Gadang" class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Kategori</label>
+                            <select class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                                <option selected>Rumah Adat</option>
+                                <option>Pakaian Adat</option>
+                                <option>Tarian</option>
+                                <option>Makanan</option>
+                                <option>Musik Tradisional</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Provinsi</label>
+                            <select class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                                <option>Aceh</option>
+                                <option>Sumatera Utara</option>
+                                <option selected>Sumatera Barat</option>
+                                <option>Jawa Barat</option>
+                                <option>Bali</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Deskripsi</label>
+                        <textarea rows="4" class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">Rumah Gadang adalah rumah adat Minangkabau dan menjadi tempat tinggal bagi masyarakat Minangkabau.</textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Gambar</label>
+                        <div class="flex items-center space-x-4">
+                            <img src="https://picsum.photos/seed/rumahgadang/100/100" alt="Rumah Gadang" class="w-20 h-20 rounded">
+                            <button type="button" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                                Ganti Gambar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="closeEditContentModal()" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                            Batal
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">
+                            Simpan Perubahan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div id="addCategoryModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
+            <div class="p-6 border-b dark:border-gray-700">
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-white">Tambah Kategori</h3>
+            </div>
+            <div class="p-6">
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nama Kategori</label>
+                        <input type="text" class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Deskripsi</label>
+                        <textarea rows="3" class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Icon</label>
+                        <select class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                            <option><i class="fas fa-home"></i> Rumah</option>
+                            <option><i class="fas fa-tshirt"></i> Pakaian</option>
+                            <option><i class="fas fa-music"></i> Musik</option>
+                            <option><i class="fas fa-utensils"></i> Makanan</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="closeAddCategoryModal()" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                            Batal
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">
+                            Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Category Modal -->
+    <div id="editCategoryModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
+            <div class="p-6 border-b dark:border-gray-700">
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-white">Edit Kategori</h3>
+            </div>
+            <div class="p-6">
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nama Kategori</label>
+                        <input type="text" value="Rumah Adat" class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Deskripsi</label>
+                        <textarea rows="3" class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">Kumpulan rumah adat dari berbagai daerah di Indonesia</textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Icon</label>
+                        <select class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                            <option selected><i class="fas fa-home"></i> Rumah</option>
+                            <option><i class="fas fa-tshirt"></i> Pakaian</option>
+                            <option><i class="fas fa-music"></i> Musik</option>
+                            <option><i class="fas fa-utensils"></i> Makanan</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="closeEditCategoryModal()" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                            Batal
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">
+                            Simpan Perubahan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Admin Modal -->
+    <div id="addAdminModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
+            <div class="p-6 border-b dark:border-gray-700">
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-white">Tambah Admin Baru</h3>
+            </div>
+            <div class="p-6">
+                <form id="addAdminForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
+                        <input type="text" id="adminName" required class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email <span class="text-red-500">*</span></label>
+                        <input type="email" id="adminEmail" required class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password <span class="text-red-500">*</span></label>
+                        <input type="password" id="adminPassword" required minlength="8" class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Minimal 8 karakter</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Konfirmasi Password <span class="text-red-500">*</span></label>
+                        <input type="password" id="adminConfirmPassword" required class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Role <span class="text-red-500">*</span></label>
+                        <select id="adminRole" required class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                            <option value="">Pilih Role</option>
+                            <option value="super_admin">Super Admin</option>
+                            <option value="admin">Admin</option>
+                            <option value="editor">Editor</option>
+                        </select>
+                        <div class="mt-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                            <p class="text-xs text-blue-800 dark:text-blue-400">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                <strong>Super Admin:</strong> Akses penuh ke semua fitur termasuk manajemen pengguna<br>
+                                <strong>Admin:</strong> Bisa menambah, mengedit, menghapus konten budaya<br>
+                                <strong>Editor:</strong> Hanya bisa menambah dan mengedit konten budaya
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Departemen (Opsional)</label>
+                        <input type="text" placeholder="Contoh: Konten, Desain, Marketing" class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="closeAddAdminModal()" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                            Batal
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">
+                            <i class="fas fa-user-plus mr-2"></i>Tambah Admin
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Admin Modal -->
+    <div id="editAdminModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
+            <div class="p-6 border-b dark:border-gray-700">
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-white">Edit Admin</h3>
+            </div>
+            <div class="p-6">
+                <form id="editAdminForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nama Lengkap</label>
+                        <input type="text" id="editAdminName" value="Siti Aminah" class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                        <input type="email" id="editAdminEmail" value="siti@budayaid.com" class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Role</label>
+                        <select id="editAdminRole" class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                            <option value="super_admin">Super Admin</option>
+                            <option value="admin">Admin</option>
+                            <option value="editor" selected>Editor</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
+                        <select id="editAdminStatus" class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                            <option value="active" selected>Aktif</option>
+                            <option value="inactive">Nonaktif</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Reset Password</label>
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox" id="resetPassword" class="rounded">
+                            <label for="resetPassword" class="text-sm text-gray-600 dark:text-gray-400">Kirim email reset password</label>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="closeEditAdminModal()" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                            Batal
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">
+                            <i class="fas fa-save mr-2"></i>Simpan Perubahan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Backup & Restore Modal -->
+    <div id="backupModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
+            <div class="p-6 border-b dark:border-gray-700">
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-white">Backup & Restore Data</h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-medium text-gray-800 dark:text-white mb-2">Backup Data</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Buat backup dari semua data konten budaya dan pengguna</p>
+                        <button class="w-full px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                            <i class="fas fa-download mr-2"></i>Download Backup
+                        </button>
+                    </div>
+                    
+                    <div class="pt-4 border-t dark:border-gray-700">
+                        <h4 class="font-medium text-gray-800 dark:text-white mb-2">Restore Data</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Upload file backup untuk mengembalikan data</p>
+                        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center mb-4">
+                            <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
+                            <p class="text-gray-500 dark:text-gray-400">Drag & drop atau klik untuk upload</p>
+                        </div>
+                        <button class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                            <i class="fas fa-upload mr-2"></i>Upload & Restore
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end pt-4">
+                    <button onclick="closeBackupModal()" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize charts
+        let visitChart, contentChart, loginChart, interactionChart;
+
+        // Dark mode toggle
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
+            
+            // Update charts for dark mode
+            if (visitChart) updateChartTheme(visitChart);
+            if (contentChart) updateChartTheme(contentChart);
+            if (loginChart) updateChartTheme(loginChart);
+            if (interactionChart) updateChartTheme(interactionChart);
+        }
+
+        // Check dark mode preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.documentElement.classList.add('dark');
+        }
+
+        // Update chart theme
+        function updateChartTheme(chart) {
+            const isDark = document.documentElement.classList.contains('dark');
+            chart.options.scales.x.grid.color = isDark ? '#374151' : '#e5e7eb';
+            chart.options.scales.y.grid.color = isDark ? '#374151' : '#e5e7eb';
+            chart.options.scales.x.ticks.color = isDark ? '#9ca3af' : '#6b7280';
+            chart.options.scales.y.ticks.color = isDark ? '#9ca3af' : '#6b7280';
+            chart.update();
+        }
+
+        // Sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        // Show section
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.remove('hidden');
+            
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('bg-gray-100', 'dark:bg-gray-700');
+            });
+            event.target.closest('.nav-item').classList.add('bg-gray-100', 'dark:bg-gray-700');
+            
+            // Initialize charts for specific sections
+            if (sectionId === 'dashboard') {
+                initDashboardCharts();
+            } else if (sectionId === 'reports') {
+                initReportsCharts();
+            }
+            
+            // Close sidebar on mobile
+            if (window.innerWidth < 1024) {
+                toggleSidebar();
+            }
+        }
+
+        // Toggle dropdowns
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.relative')) {
+                document.getElementById('notificationDropdown').classList.add('hidden');
+                document.getElementById('userDropdown').classList.add('hidden');
+            }
+        });
+
+        // Toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 flex items-center space-x-3 ${
+                type === 'success' ? 'border-l-4 border-green-500' : 
+                type === 'error' ? 'border-l-4 border-red-500' : 
+                type === 'warning' ? 'border-l-4 border-yellow-500' : 
+                'border-l-4 border-blue-500'
+            }`;
+            
+            const icon = type === 'success' ? 'fa-check-circle text-green-500' : 
+                         type === 'error' ? 'fa-exclamation-circle text-red-500' : 
+                         type === 'warning' ? 'fa-exclamation-triangle text-yellow-500' : 
+                         'fa-info-circle text-blue-500';
+            
+            toast.innerHTML = `
+                <i class="fas ${icon} text-xl"></i>
+                <span class="text-gray-800 dark:text-white">${message}</span>
+            `;
+            
+            document.getElementById('toastContainer').appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 100);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Modal functions
+        function openAddContentModal() {
+            document.getElementById('addContentModal').classList.remove('hidden');
+        }
+
+        function closeAddContentModal() {
+            document.getElementById('addContentModal').classList.add('hidden');
+        }
+
+        function openEditContentModal() {
+            document.getElementById('editContentModal').classList.remove('hidden');
+        }
+
+        function closeEditContentModal() {
+            document.getElementById('editContentModal').classList.add('hidden');
+        }
+
+        function openAddCategoryModal() {
+            document.getElementById('addCategoryModal').classList.remove('hidden');
+        }
+
+        function closeAddCategoryModal() {
+            document.getElementById('addCategoryModal').classList.add('hidden');
+        }
+
+        function openEditCategoryModal() {
+            document.getElementById('editCategoryModal').classList.remove('hidden');
+        }
+
+        function closeEditCategoryModal() {
+            document.getElementById('editCategoryModal').classList.add('hidden');
+        }
+
+        function openAddAdminModal() {
+            document.getElementById('addAdminModal').classList.remove('hidden');
+        }
+
+        function closeAddAdminModal() {
+            document.getElementById('addAdminModal').classList.add('hidden');
+            document.getElementById('addAdminForm').reset();
+        }
+
+        function openEditAdminModal() {
+            document.getElementById('editAdminModal').classList.remove('hidden');
+        }
+
+        function closeEditAdminModal() {
+            document.getElementById('editAdminModal').classList.add('hidden');
+        }
+
+        function openBackupModal() {
+            document.getElementById('backupModal').classList.remove('hidden');
+        }
+
+        function closeBackupModal() {
+            document.getElementById('backupModal').classList.add('hidden');
+        }
+
+        // Tab switching for Users section
+        function switchUserTab(tab) {
+            const adminTab = document.getElementById('adminTab');
+            const userTab = document.getElementById('userTab');
+            const adminTable = document.getElementById('adminTable');
+            const userTable = document.getElementById('userTable');
+            
+            if (tab === 'admin') {
+                adminTab.classList.add('border-primary', 'text-primary');
+                adminTab.classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+                userTab.classList.remove('border-primary', 'text-primary');
+                userTab.classList.add('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+                adminTable.classList.remove('hidden');
+                userTable.classList.add('hidden');
+            } else {
+                userTab.classList.add('border-primary', 'text-primary');
+                userTab.classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+                adminTab.classList.remove('border-primary', 'text-primary');
+                adminTab.classList.add('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+                userTable.classList.remove('hidden');
+                adminTable.classList.add('hidden');
+            }
+        }
+
+        // Form submission handlers
+        document.getElementById('addAdminForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('adminName').value;
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+            const confirmPassword = document.getElementById('adminConfirmPassword').value;
+            const role = document.getElementById('adminRole').value;
+            
+            // Validation
+            if (password !== confirmPassword) {
+                showToast('Password tidak cocok!', 'error');
+                return;
+            }
+            
+            if (password.length < 8) {
+                showToast('Password minimal 8 karakter!', 'error');
+                return;
+            }
+            
+            // Simulate API call
+            showToast(`Admin ${name} berhasil ditambahkan!`, 'success');
+            closeAddAdminModal();
+            
+            // In real app, you would send data to backend
+            console.log('New admin:', { name, email, role });
+        });
+
+        document.getElementById('editAdminForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('editAdminName').value;
+            const email = document.getElementById('editAdminEmail').value;
+            const role = document.getElementById('editAdminRole').value;
+            const status = document.getElementById('editAdminStatus').value;
+            const resetPassword = document.getElementById('resetPassword').checked;
+            
+            showToast(`Data admin ${name} berhasil diperbarui!`, 'success');
+            closeEditAdminModal();
+            
+            if (resetPassword) {
+                showToast('Email reset password telah dikirim!', 'success');
+            }
+            
+            // In real app, you would send data to backend
+            console.log('Updated admin:', { name, email, role, status, resetPassword });
+        });
+
+        // Action functions
+        function deleteContent() {
+            if (confirm('Apakah Anda yakin ingin menghapus konten ini?')) {
+                showToast('Konten berhasil dihapus!', 'success');
+            }
+        }
+
+        function deleteCategory() {
+            if (confirm('Apakah Anda yakin ingin menghapus kategori ini?')) {
+                showToast('Kategori berhasil dihapus!', 'success');
+            }
+        }
+
+        function deleteAdmin() {
+            if (confirm('Apakah Anda yakin ingin menghapus admin ini?')) {
+                showToast('Admin berhasil dihapus!', 'success');
+            }
+        }
+
+        function disableReview() {
+            if (confirm('Apakah Anda yakin ingin menonaktifkan ulasan ini?')) {
+                showToast('Ulasan berhasil dinonaktifkan!', 'success');
+            }
+        }
+
+        function bulkDelete() {
+            if (confirm('Apakah Anda yakin ingin menghapus item yang dipilih?')) {
+                showToast('Item berhasil dihapus!', 'success');
+            }
+        }
+
+        function bulkPublish() {
+            showToast('Item berhasil dipublish!', 'success');
+        }
+
+        function bulkUnpublish() {
+            showToast('Item berhasil diunpublish!', 'success');
+        }
+
+        // Logout
+        function logout() {
+            showToast('Berhasil logout!', 'success');
+            setTimeout(() => {
+                // In real app, redirect to login page
+                console.log('Redirecting to login...');
+            }, 1000);
+        }
+
+        // Initialize dashboard charts
+        function initDashboardCharts() {
+            if (visitChart) return;
+            
+            // Visit Chart
+            const visitCtx = document.getElementById('visitChart').getContext('2d');
+            visitChart = new Chart(visitCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
+                    datasets: [{
+                        label: 'Kunjungan',
+                        data: [2100, 2800, 2500, 3200, 2900, 3500, 3421],
+                        borderColor: '#6D2323',
+                        backgroundColor: 'rgba(109, 35, 35, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: document.documentElement.classList.contains('dark') ? '#374151' : '#e5e7eb'
+                            },
+                            ticks: {
+                                color: document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: document.documentElement.classList.contains('dark') ? '#374151' : '#e5e7eb'
+                            },
+                            ticks: {
+                                color: document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Content Distribution Chart
+            const contentCtx = document.getElementById('contentChart').getContext('2d');
+            contentChart = new Chart(contentCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Rumah Adat', 'Pakaian Adat', 'Tarian', 'Makanan', 'Musik'],
+                    datasets: [{
+                        data: [45, 38, 52, 67, 43],
+                        backgroundColor: [
+                            '#6D2323',
+                            '#8B2F2F',
+                            '#A53C3C',
+                            '#BF4949',
+                            '#D95656'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize reports charts
+        function initReportsCharts() {
+            if (loginChart) return;
+            
+            // Login Activity Chart
+            const loginCtx = document.getElementById('loginChart').getContext('2d');
+            loginChart = new Chart(loginCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+                    datasets: [{
+                        label: 'Login',
+                        data: [120, 80, 450, 680, 520, 380],
+                        backgroundColor: 'rgba(109, 35, 35, 0.8)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: document.documentElement.classList.contains('dark') ? '#374151' : '#e5e7eb'
+                            },
+                            ticks: {
+                                color: document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: document.documentElement.classList.contains('dark') ? '#374151' : '#e5e7eb'
+                            },
+                            ticks: {
+                                color: document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Content Interaction Chart
+            const interactionCtx = document.getElementById('interactionChart').getContext('2d');
+            interactionChart = new Chart(interactionCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
+                    datasets: [{
+                        label: 'View',
+                        data: [12000, 19000, 15000, 25000, 22000, 30000],
+                        borderColor: '#6D2323',
+                        backgroundColor: 'rgba(109, 35, 35, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Like',
+                        data: [8000, 12000, 10000, 18000, 15000, 22000],
+                        borderColor: '#8B2F2F',
+                        backgroundColor: 'rgba(139, 47, 47, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: document.documentElement.classList.contains('dark') ? '#374151' : '#e5e7eb'
+                            },
+                            ticks: {
+                                color: document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: document.documentElement.classList.contains('dark') ? '#374151' : '#e5e7eb'
+                            },
+                            ticks: {
+                                color: document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Simulate real-time notifications
+        setInterval(() => {
+            const notifications = [
+                { message: 'Konten baru: Tari Kecak', type: 'success' },
+                { message: 'Ulasan baru: 4 bintang', type: 'success' },
+                { message: 'Pengguna baru terdaftar', type: 'info' },
+                { message: 'Rating rendah terdeteksi', type: 'warning' }
+            ];
+            
+            if (Math.random() > 0.7) {
+                const randomNotification = notifications[Math.floor(Math.random() * notifications.length)];
+                showToast(randomNotification.message, randomNotification.type);
+                
+                // Update notification count
+                const countElement = document.getElementById('notificationCount');
+                const currentCount = parseInt(countElement.textContent);
+                countElement.textContent = currentCount + 1;
+            }
+        }, 30000);
+
+        // Check if current user is Super Admin (simulate)
+        const isSuperAdmin = true; // In real app, get from user session
+
+        // Show/hide admin management features based on role
+        if (isSuperAdmin) {
+            document.getElementById('adminManagementLink').classList.remove('hidden');
+        }
+
+        // Initialize dashboard on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initDashboardCharts();
+        });
+
+        
+    </script>
+</body>
+</html>

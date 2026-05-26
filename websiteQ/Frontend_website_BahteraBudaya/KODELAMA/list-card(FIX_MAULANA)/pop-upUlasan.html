@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <!-- =========================================== -->
+    <!-- CODE SECTION: Head Metadata - Contains document metadata and external resources -->
+    <!-- Penjelasan: Bagian ini mendefinisikan charset, viewport untuk responsivitas, judul halaman, dan link ke stylesheet serta font eksternal. Untuk pemula: Head adalah tempat meletakkan informasi non-visual seperti link CSS dan meta tags. -->
+    <!-- =========================================== -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ulasan Rumah Adat</title>
+    <link rel="stylesheet" href="pop-upUlasan.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- =========================================== -->
+    <!-- CODE SECTION: Modal Overlay - Background layer for the modal -->
+    <!-- Penjelasan: Div ini menciptakan overlay gelap di seluruh layar untuk fokus pada modal. Untuk pemula: Overlay membantu mencegah interaksi dengan konten di belakang modal. -->
+    <!-- =========================================== -->
+    <div class="modal-overlay">
+        <!-- =========================================== -->
+        <!-- CODE SECTION: Modal Container - Main wrapper for modal content -->
+        <!-- Penjelasan: Container utama modal dengan batas lebar maksimal dan overflow handling. Untuk pemula: Ini adalah kotak utama yang muncul di tengah layar. -->
+        <!-- =========================================== -->
+        <div class="modal-container">
+            <!-- =========================================== -->
+            <!-- CODE SECTION: Modal Header - Title and close button -->
+            <!-- Penjelasan: Header modal dengan judul dan tombol tutup. Untuk pemula: ARIA-label ditambahkan untuk aksesibilitas agar screen reader bisa membaca fungsi tombol. -->
+            <!-- =========================================== -->
+            <div class="modal-header">
+                <h2 class="modal-title">Ulasan & Rating Konten Budaya</h2>
+                <button class="close-button" aria-label="Tutup modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="divider"></div>
+           
+            <!-- =========================================== -->
+            <!-- CODE SECTION: Modal Content - Main body of the modal -->
+            <!-- Penjelasan: Area konten yang bisa di-scroll jika terlalu panjang. Untuk pemula: Overflow-y auto memungkinkan scroll vertikal jika konten melebihi tinggi maksimal. -->
+            <!-- =========================================== -->
+            <div class="modal-content">
+                <!-- =========================================== -->
+                <!-- CODE SECTION: Overall Rating - Display average rating -->
+                <!-- Penjelasan: Menampilkan rating keseluruhan dengan angka dan bintang. Untuk pemula: Gunakan ikon Font Awesome untuk bintang. -->
+                <!-- =========================================== -->
+                <div class="overall-rating">
+                    <div class="rating-number">4.5</div>
+                    <div class="stars-container">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <span class="max-rating">5.0</span>
+                    </div>
+                </div>
+               
+                <!-- =========================================== -->
+                <!-- CODE SECTION: Rating Distribution - Bars for each star level -->
+                <!-- Penjelasan: Distribusi rating per bintang dengan progress bar. Untuk pemula: Lebar progress-fill diatur inline untuk fleksibilitas dinamis. -->
+                <!-- =========================================== -->
+                <div class="rating-distribution">
+                    <div class="rating-bar">
+                        <span class="star-label">5 star</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 40%"></div>
+                        </div>
+                        <span class="review-count">2</span>
+                    </div>
+                    <div class="rating-bar">
+                        <span class="star-label">4 star</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 40%"></div>
+                        </div>
+                        <span class="review-count">2</span>
+                    </div>
+                    <div class="rating-bar">
+                        <span class="star-label">3 star</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="review-count">0</span>
+                    </div>
+                    <div class="rating-bar">
+                        <span class="star-label">2 star</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="review-count">0</span>
+                    </div>
+                    <div class="rating-bar">
+                        <span class="star-label">1 star</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="review-count">0</span>
+                    </div>
+                </div>
+               
+                <!-- =========================================== -->
+                <!-- CODE SECTION: Write Review Button - Button to open form -->
+                <!-- Penjelasan: Tombol untuk membuka form ulasan. Untuk pemula: ID digunakan oleh JS untuk event listener. -->
+                <!-- =========================================== -->
+                <button class="write-review-btn" id="open-review-form">
+                    <i class="fas fa-plus"></i> Tulis Ulasan
+                </button>
+               
+                <!-- =========================================== -->
+                <!-- CODE SECTION: Review Form - Form for submitting new review -->
+                <!-- Penjelasan: Form ulasan dengan rating bintang, input nama, dan textarea. Untuk pemula: Form ini disembunyikan awalnya dan di-toggle via JS. -->
+                <!-- =========================================== -->
+                <!-- FORM ULASAN DENGAN FOOTER STICKY -->
+                <div class="review-form" id="review-form">
+                    <div class="form-scrollable">
+                        <h3 class="form-title">Penilaian Anda</h3>
+                       
+                        <div class="star-rating">
+                            <i class="fas fa-star active"></i>
+                            <i class="fas fa-star active"></i>
+                            <i class="fas fa-star active"></i>
+                            <i class="fas fa-star active"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                       
+                        <div class="form-group">
+                            <label for="user-name" class="form-label">Nama Anda</label>
+                            <input type="text" id="user-name" class="form-input" placeholder="Masukan nama kamu">
+                        </div>
+                       
+                        <div class="form-group">
+                            <label for="user-review" class="form-label">Ulasan Anda</label>
+                            <textarea id="user-review" class="form-textarea" placeholder="Tuliskan pendapat Anda tentang konten budaya ini." rows="4"></textarea>
+                        </div>
+                    </div>
+                   
+                    <div class="form-actions">
+                        <button class="btn-cancel" id="cancel-form">Cancel</button>
+                        <button class="btn-submit" id="submit-review">Submit Review</button>
+                    </div>
+                </div>
+               
+                <!-- =========================================== -->
+                <!-- CODE SECTION: Reviews Container - List of existing reviews -->
+                <!-- Penjelasan: Container untuk daftar ulasan pengguna. Untuk pemula: Setiap review-item adalah satu ulasan dengan avatar, teks, dan like. -->
+                <!-- =========================================== -->
+                <div class="reviews-container">
+                    <div class="review-item">
+                        <div class="user-avatar">DC</div>
+                        <div class="review-content">
+                            <div class="user-info">
+                                <div class="user-name">David Chan</div>
+                                <div class="review-time">3 week ago</div>
+                            </div>
+                            <p class="review-text">Desain arsitekturnya sangat simbolis dan penuh makna, bukan sekadar estetika.</p>
+                            <div class="user-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <div class="like-container">
+                                <button class="like-btn">
+                                    <i class="far fa-thumbs-up"></i> 10
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                   
+                    <div class="review-divider"></div>
+                   
+                    <div class="review-item">
+                        <div class="user-avatar">SJ</div>
+                        <div class="review-content">
+                            <div class="user-info">
+                                <div class="user-name">Sarah Jhonson</div>
+                                <div class="review-time">1 month ago</div>
+                            </div>
+                            <p class="review-text">Setiap ukiran memiliki cerita yang mendalam tentang kehidupan masyarakat adat setempat. Sangat menginspirasi!</p>
+                            <div class="user-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <div class="like-container">
+                                <button class="like-btn">
+                                    <i class="far fa-thumbs-up"></i> 8
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- =========================================== -->
+    <!-- CODE SECTION: JavaScript - Script for interactivity -->
+    <!-- Penjelasan: Script ini menangani event seperti toggle form, submit, dan rating bintang. Untuk pemula: Gunakan DOMContentLoaded untuk memastikan elemen siap sebelum menambahkan event listener. -->
+    <!-- =========================================== -->
+    <script>
+    // === SECTION SWITCH: Initialization -> Event Listeners ===
+// Handler: DOMContentLoaded - Wait for DOM to load before binding events
+// Purpose: Ensure all elements are available before adding listeners.
+// Inputs: None
+// Returns: None
+// Side-effects: Adds event listeners to buttons and stars.
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('review-form');
+    const openBtn = document.getElementById('open-review-form');
+    const cancelBtn = document.getElementById('cancel-form');
+    const submitBtn = document.getElementById('submit-review');
+    const stars = form.querySelectorAll('.star-rating i');
+    const userName = document.getElementById('user-name');
+    const userReview = document.getElementById('user-review');
+   
+    let isFormOpen = false;
+   
+    // === SECTION SWITCH: Event Listeners -> Form Toggle ===
+    // Handler: openBtn click - Toggle form visibility with animation
+    // Purpose: Show the review form.
+    // Inputs: Click event
+    // Returns: None
+    // Side-effects: Changes form styles and hides open button.
+    openBtn.addEventListener('click', () => {
+        isFormOpen = true;
+        form.style.maxHeight = form.scrollHeight + 'px';
+        form.style.opacity = '1';
+        form.style.padding = '0 24px 24px'; // Include bottom padding now
+        openBtn.style.display = 'none';
+    });
+   
+    // Handler: cancelBtn click - Hide form and reset
+    // Purpose: Cancel and close the form.
+    // Inputs: Click event
+    // Returns: None
+    // Side-effects: Resets form fields and shows open button.
+    cancelBtn.addEventListener('click', () => {
+        isFormOpen = false;
+        form.style.maxHeight = '0';
+        form.style.opacity = '0';
+        form.style.padding = '0 24px';
+        openBtn.style.display = 'flex';
+        resetForm();
+    });
+   
+    // Handler: submitBtn click - Validate and submit review
+    // Purpose: Process form submission.
+    // Inputs: Click event
+    // Returns: None
+    // Side-effects: Alerts submission, closes form, resets fields.
+    // CHANGE_START - Tambah validasi rating minimal (minimal 1 bintang), non-trivial: bisa revert dengan hapus if baru.
+    // CHANGE_END
+    submitBtn.addEventListener('click', () => {
+        const name = userName.value.trim();
+        const review = userReview.value.trim();
+        const rating = document.querySelectorAll('.star-rating .active').length;
+       
+        if (!name || !review || rating === 0) {
+            alert('Nama, ulasan, dan rating minimal 1 bintang wajib diisi!');
+            return;
+        }
+       
+        alert(`Ulasan berhasil dikirim!\nRating: ${rating} bintang\nNama: ${name}\nUlasan: ${review}`);
+        isFormOpen = false;
+        form.style.maxHeight = '0';
+        form.style.opacity = '0';
+        form.style.padding = '0 24px';
+        openBtn.style.display = 'flex';
+        resetForm();
+    });
+   
+    // === SECTION SWITCH: Form Toggle -> Star Rating ===
+    // Handler: stars click - Update star rating
+    // Purpose: Handle star selection.
+    // Inputs: Click event, index
+    // Returns: None
+    // Side-effects: Updates class on stars for visual feedback.
+    stars.forEach((star, index) => {
+        star.addEventListener('click', () => {
+            stars.forEach((s, i) => {
+                if (i <= index) {
+                    s.classList.add('active');
+                    s.classList.remove('far');
+                    s.classList.add('fas');
+                } else {
+                    s.classList.remove('active');
+                    s.classList.add('far');
+                    s.classList.remove('fas');
+                }
+            });
+        });
+    });
+   
+    // === SECTION SWITCH: Star Rating -> Utility Functions ===
+    // Handler: resetForm - Reset form to initial state
+    // Purpose: Clear inputs and reset stars.
+    // Inputs: None
+    // Returns: None
+    // Side-effects: Clears values and resets classes.
+    function resetForm() {
+        userName.value = '';
+        userReview.value = '';
+        // Reset stars to default (4 filled)
+        stars.forEach((star, index) => {
+            if (index < 4) {
+                star.classList.add('active', 'fas');
+                star.classList.remove('far');
+            } else {
+                star.classList.remove('active', 'fas');
+                star.classList.add('far');
+            }
+        });
+    }
+});
+    </script>
+</body>
+</html>

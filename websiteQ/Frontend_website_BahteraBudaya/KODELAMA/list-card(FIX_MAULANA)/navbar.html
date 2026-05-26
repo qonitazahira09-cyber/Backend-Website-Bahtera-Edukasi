@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bahtera Edukasi</title>
+  <link rel="stylesheet" href="navbar.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <!-- Logo situs -->
+      <a class="brand" href="#">
+        <img class="brand-icon" src="assetimgLandingPage/LogoBahtera(SVG).svg" alt="Bahtera Edukasi" width="120" height="70">
+      </a>
+
+      <!-- Navigasi utama -->
+      <nav class="main-nav" aria-label="Utama">
+        <ul>
+          <li><a href="#home" class="active">Beranda</a></li>
+          <li><a href="#about">Tentang</a></li>
+          <li><a href="#katalog">Katalog</a></li>
+        </ul>
+      </nav>
+
+      <!-- Aksi kanan -->
+      <div class="actions">
+        <!-- Form pencarian -->
+        <form class="search-form" role="search" action="#" method="get">
+          <label class="search">
+            <button class="search-btn" type="submit" aria-label="Cari">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
+                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="m21 21l-4.343-4.343m0 0A8 8 0 1 0 5.343 5.343a8 8 0 0 0 11.314 11.314" />
+              </svg>
+            </button>
+            <input id="searchInput" name="q" type="search" placeholder="Cari..." aria-label="Cari" required>
+            <button class="search-clear" type="reset" aria-label="Bersihkan pencarian" title="Bersihkan">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path fill="currentColor"
+                  d="M18.3 5.71a.996.996 0 0 0-1.41 0L12 10.59L7.11 5.7A.996.996 0 1 0 5.7 7.11L10.59 12L5.7 16.89a.996.996 0 0 0 1.41 1.41L12 13.41l4.89 4.89a.996.996 0 0 0 1.41-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4" />
+              </svg>
+            </button>
+          </label>
+        </form>
+
+        <!-- Menu Bahasa -->
+        <div class="lang-menu">
+          <!-- Checkbox untuk toggle dropdown -->
+          <input type="checkbox" id="lang-toggle" hidden>
+          <label for="lang-toggle" class="lang-btn" role="button" aria-haspopup="true" aria-controls="lang-dropdown">
+            <span class="flag">
+              <!-- Bendera Indonesia default -->
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-hidden="true">
+                <g fill-rule="nonzero">
+                  <path fill="#999"
+                    d="M256 0c70.68 0 134.69 28.66 181.01 74.99C483.34 121.31 512 185.32 512 256c0 70.68-28.66 134.69-74.99 181.01C390.69 483.34 326.68 512 256 512c-70.68 0-134.69-28.66-181.01-74.99C28.66 390.69 0 326.68 0 256c0-70.68 28.66-134.69 74.99-181.01C121.31 28.66 185.32 0 256 0z" />
+                  <path fill="#fff"
+                    d="M256 19.48c65.3 0 124.46 26.48 167.25 69.27l1.09 1.18c42.14 42.71 68.18 101.37 68.18 166.06 0 65.31-26.5 124.46-69.29 167.25l-1.18 1.09c-42.73 42.16-101.4 68.19-166.05 68.19-65.23 0-124.37-26.51-167.18-69.33-42.84-42.74-69.33-101.89-69.33-167.2 0-65.31 26.48-124.45 69.27-167.24C131.55 45.96 190.7 19.48 256 19.48z" />
+                  <path fill="red" d="M472.41 256.42H39.6v-.43c0-119.51 96.89-216.4 216.4-216.4 119.52 0 216.41 96.89 216.41 216.4v.43z" />
+                </g>
+              </svg>
+            </span>
+            <svg class="chev" width="10" height="6" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1l4 3 4-3" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </label>
+
+          <!-- Dropdown bahasa -->
+          <div class="lang-dropdown" id="lang-dropdown" role="menu" aria-label="Pilih Bahasa">
+            <a href="#" class="lang-option" role="menuitem">
+              <span class="opt-flag">
+                <!-- Indonesia -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                  <path fill="#e70000" d="M0 0h512v256H0z" />
+                  <path fill="#fff" d="M0 256h512v256H0z" />
+                </svg>
+              </span>
+              Indonesia
+            </a>
+            <a href="#" class="lang-option" role="menuitem">
+              <span class="opt-flag">
+                <!-- Inggris -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                  <path fill="#012169" d="M0 0h512v512H0z" />
+                  <path fill="#fff"
+                    d="M512 60.2v72.5L319.3 256 512 379.3v72.5l-209-135.6V512h-94V316.2L0 451.8v-72.5L192.7 256 0 132.7V60.2l209 135.6V0h94v195.8L512 60.2z" />
+                  <path fill="#C8102E"
+                    d="M512 0v28.7L300.2 164.3h-37.9L512 0zM0 0l212.7 164.3h-37.9L0 28.7V0zm0 512v-28.7l212.7-135.6h37.9L0 512zm512 0L299.8 347.7h37.9L512 483.3V512z" />
+                  <path fill="#C8102E"
+                    d="M204.8 0h102.4v512H204.8zM0 204.8h512v102.4H0z" />
+                </svg>
+              </span>
+              English
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <script>
+    // Tutup dropdown jika klik di luar menu
+    document.addEventListener('click', function (e) {
+      const toggle = document.getElementById('lang-toggle');
+      const menu = document.querySelector('.lang-menu');
+      if (!menu.contains(e.target)) toggle.checked = false;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+/* Reset dasar dan box sizing */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Gaya dasar body */
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* Kontainer utama lupa password */
+.forgot-container {
+    display: flex;
+    width: 100%;
+    max-width: 900px;
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    overflow: hidden;
+    min-height: 500px;
+}
+
+/* Kolom kiri: Logo murni tanpa background */
+.forgot-illustration {
+    flex: 1;
+    background-color: transparent; /* Tanpa background sama sekali */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.illustration-logo {
+    width: 100%;
+    max-width: none; /* Ukuran sama dengan halaman login admin */
+    height: auto;
+    display: block;
+}
+
+/* Kolom kanan: Form lupa password */
+.forgot-form {
+    flex: 1;
+    padding: 40px 35px;
+    background-color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Judul form */
+.form-title {
+    color: #C00000;
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+/* Subjudul form */
+.form-subtitle {
+    color: #333333;
+    font-family: 'Garamond', serif;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    word-wrap: break-word;
+}
+
+/* Grup input */
+.input-group {
+    margin-bottom: 25px;
+}
+
+.input-label {
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #555;
+}
+
+/* Input field umum */
+.input-field {
+    width: 100%;
+    padding: 12px 15px;
+    background-color: #F5F5F5;
+    border: 1px solid #D0D0D0;
+    border-radius: 6px;
+    font-size: 16px;
+    font-family: 'Montserrat', sans-serif;
+    transition: border-color 0.3s;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: #A31D1D;
+}
+
+/* Tombol reset password */
+.btn-reset {
+    width: 100%;
+    padding: 15px;
+    background-color: #A31D1D;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 10px;
+}
+
+.btn-reset:hover {
+    background-color: #8a1818;
+    transform: translateY(-2px);
+}
+
+/* Link kembali ke login */
+.back-to-login {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    color: #A31D1D;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.back-to-login:hover {
+    color: #A31D1D;
+    text-decoration: underline;
+}
+
+/* RESPONSIVITAS */
+@media (max-width: 768px) {
+    .forgot-container {
+        flex-direction: column;
+        max-width: 100%;
+        min-height: auto;
+    }
+
+    .forgot-illustration {
+        flex: none;
+        padding: 20px;
+        order: -1;
+        background-color: transparent; /* Tetap transparan */
+    }
+
+    .illustration-logo {
+        max-width: 250px; /* Ukuran responsif untuk tablet */
+    }
+
+    .forgot-form {
+        padding: 30px 20px;
+    }
+
+    .form-title {
+        font-size: 28px;
+        text-align: center;
+    }
+
+    .form-subtitle {
+        font-size: 14px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+        overflow-y: auto;
+    }
+
+    .forgot-container {
+        border-radius: 0;
+    }
+
+    .illustration-logo {
+        max-width: 200px; /* Ukuran responsif untuk mobile */
+    }
+
+    .forgot-form {
+        padding: 20px 15px;
+    }
+
+    .form-title {
+        font-size: 24px;
+    }
+
+    .form-subtitle {
+        font-size: 13px;
+    }
+
+    .input-group {
+        margin-bottom: 20px;
+    }
+
+    .btn-reset {
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    .back-to-login {
+        font-size: 13px;
+        margin-top: 15px;
+    }
+}
+
+@media (min-width: 769px) {
+    body {
+        overflow: hidden;
+    }
+}
